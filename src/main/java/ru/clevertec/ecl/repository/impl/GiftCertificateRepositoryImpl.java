@@ -1,53 +1,57 @@
 package ru.clevertec.ecl.repository.impl;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.clevertec.ecl.controler.pagination.Pageable;
-import ru.clevertec.ecl.repository.api.IGiftCertificateRepository;
+import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.exceptions.IncorrectParameterException;
 import ru.clevertec.ecl.service.util.GCRequestUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class IGiftCertificateRepositoryImpl implements IGiftCertificateRepository {
+public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public IGiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public GiftCertificate create(GiftCertificate entity) throws IncorrectParameterException {
+    public GiftCertificate create(GiftCertificate entity) {
         entity.setUpdateDate(LocalDateTime.now());
         entity.setCreateDate(LocalDateTime.now());
         return jdbcTemplate.queryForObject(GCRequestUtils.CREATE_GC_SQL, new BeanPropertyRowMapper<>(GiftCertificate.class),
-                                             entity.getCreateDate(), entity.getUpdateDate(),
-                                             entity.getName(), entity.getDescription(),
-                                             entity.getPrice(), entity.getDuration());
+                                           entity.getCreateDate(), entity.getUpdateDate(),
+                                           entity.getName(), entity.getDescription(),
+                                           entity.getPrice(), entity.getDuration());
     }
 
     @Override
-    public GiftCertificate get(Long id) throws IncorrectParameterException {
-        return jdbcTemplate.queryForObject(GCRequestUtils.GET_GC_BY_ID_SQL,
-                                   new BeanPropertyRowMapper<>(GiftCertificate.class), id);
+    public Optional<GiftCertificate> findById(Long id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GCRequestUtils.GET_GC_BY_ID_SQL,
+                    new BeanPropertyRowMapper<>(GiftCertificate.class), id));
+        }catch (DataAccessException e){
+            return Optional.empty();
+        }
+
     }
 
     @Override
-    public List<GiftCertificate> getAll(Pageable pageable) {
-        return jdbcTemplate.query(GCRequestUtils.getFilteredRequest(pageable.getFilter()),
+    public List<GiftCertificate> findAllByPageableAndCertificateFilter(Pageable pageable, GiftCertificateFilter filter) {
+        return jdbcTemplate.query(GCRequestUtils.getFilteredRequest(filter),
                                   new BeanPropertyRowMapper<>(GiftCertificate.class),
-                                  pageable.getLimit(), pageable.getOffset());
-//        return jdbcTemplate.query(GCRequestUtils.GET_ALL_GC_WITH_LIMIT_OFFSET_SQL,
-//                                  new BeanPropertyRowMapper<>(GiftCertificate.class),
-//                                  pageable.getLimit(), pageable.getOffset());
+                                  pageable.getPageSize(), pageable.getOffset());
     }
 
     @Override

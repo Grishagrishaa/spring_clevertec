@@ -1,80 +1,58 @@
 package ru.clevertec.ecl.controler.handler;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.clevertec.ecl.dto.read.ErrorMessage;
-import ru.clevertec.ecl.dto.read.StructuredError;
-import ru.clevertec.ecl.exceptions.OptimisticLockException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.clevertec.ecl.dto.errors.ErrorMessage;
+import ru.clevertec.ecl.dto.errors.StructuredError;
+import ru.clevertec.ecl.service.util.ErrorMessagesUtils;
 
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.stream.StreamSupport;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static java.util.stream.Collectors.toSet;
+
 
 @RestControllerAdvice
-public class ControllerAdvice {
+public class ControllerAdvice extends ResponseEntityExceptionHandler {
+
 
     @ExceptionHandler(PSQLException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ErrorMessage handle(PSQLException e){
-        return new ErrorMessage(e.getServerErrorMessage().toString());
+    public ResponseEntity<ErrorMessage> handle(PSQLException e){
+        return ResponseEntity.status(400).body(new ErrorMessage(e.getServerErrorMessage().toString()));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ErrorMessage handle(IllegalArgumentException e){
-        return new ErrorMessage(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler(OptimisticLockException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorMessage handle(OptimisticLockException e){
-        return new ErrorMessage(
-                e.getMessage()
-        );
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handle(EntityNotFoundException e){
+        return ResponseEntity.status(400).body(new ErrorMessage(ErrorMessagesUtils.TAG_NOT_FOUND));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public StructuredError handle(ConstraintViolationException e){
-        return new StructuredError(e.getConstraintViolations().stream()
-                .map(exc -> new ErrorMessage(
-                        exc.getPropertyPath().toString().split("\\.")[2],
-                        exc.getMessage()))
-                .collect(Collectors.toSet()));
+    public ResponseEntity<StructuredError> handle(ConstraintViolationException e){
+        return ResponseEntity.status(400).body(new StructuredError(buildErrorMessages(e.getConstraintViolations())));
     }
 
-    @ExceptionHandler(EmptyResultDataAccessException.class)
-    @ResponseStatus(NO_CONTENT)
-    public ErrorMessage handle(EmptyResultDataAccessException e){
-        return new ErrorMessage(
-                "NO ENTITY WAS FOUND"
-        );
-    }
+    private Set<ErrorMessage> buildErrorMessages(Set<ConstraintViolation<?>> violations) {
+        return violations.stream()
+                .map(violation -> ErrorMessage.builder()
+                                .field(StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
+                                                           .reduce((first, second) -> second)
+                                                           .orElse(null)
+                                                           .toString())
+                                .message(violation.getMessage())
+                                .build())
+                .collect(toSet());
+      }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ErrorMessage handle(HttpRequestMethodNotSupportedException e){
-        return new ErrorMessage(
-                "CHECK URL / HTTP METHOD"
-        );
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorMessage> handle(EmptyResultDataAccessException e){
+        return ResponseEntity.status(204).body(new ErrorMessage(e.getMessage()));
     }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ErrorMessage handle(HttpMessageNotReadableException e){
-        return new ErrorMessage(
-                e.getLocalizedMessage()
-        );
-    }
-
 }

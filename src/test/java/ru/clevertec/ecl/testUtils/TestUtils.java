@@ -1,4 +1,6 @@
-package ru.clevertec.ecl.utils;
+package ru.clevertec.ecl.testUtils;
+
+import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
 import java.util.Random;
 
@@ -25,6 +27,7 @@ public final class TestUtils {
 
     public static long getRandomLong(long bound){
         return rnd.nextLong(bound);
+
 
     }
 

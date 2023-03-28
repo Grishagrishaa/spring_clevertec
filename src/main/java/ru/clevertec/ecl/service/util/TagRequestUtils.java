@@ -21,7 +21,7 @@ public final class TagRequestUtils {
             "WHERE id = ?" +
             "RETURNING *;";
 
-    public static final String DELETE_TAG_BY_ID = "DELETE FROM clev.gift_certificates " +
+    public static final String DELETE_TAG_BY_ID = "DELETE FROM clev.tags " +
             "WHERE id = ?";
 
     public static final String IS_EXISTS_TAG_BY_NAME = "SELECT id, create_date, update_date, name " +

@@ -1,30 +1,27 @@
 package ru.clevertec.ecl.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import ru.clevertec.ecl.controler.pagination.Pageable;
-import ru.clevertec.ecl.repository.api.ITagRepository;
+import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.api.IService;
 import ru.clevertec.ecl.dto.create.TagCreateDto;
 import ru.clevertec.ecl.dto.read.TagReadDto;
-import ru.clevertec.ecl.exceptions.OptimisticLockException;
+import ru.clevertec.ecl.service.TagService;
 import ru.clevertec.ecl.service.mappers.api.ITagMapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Validated
 @Transactional(readOnly = true)
-public class ITagServiceImpl implements IService<TagCreateDto, TagReadDto> {
+public class TagServiceImpl implements TagService {
     private final ITagMapper tagMapper;
-    private final ITagRepository tagRepository;
+    private final TagRepository tagRepository;
 
-    public ITagServiceImpl(ITagRepository tagRepository) {
+    public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
         this.tagMapper = Mappers.getMapper(ITagMapper.class);
     }
@@ -36,25 +33,21 @@ public class ITagServiceImpl implements IService<TagCreateDto, TagReadDto> {
     }
 
     @Override
-    public TagReadDto get(Long id) {
-        return tagMapper.entityToReadDto(tagRepository.get(id));
+    public TagReadDto findById(Long id) {
+        return tagMapper.entityToReadDto(tagRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
     @Override
-    public List<TagReadDto> getAll(Pageable pageable) {
-        return tagRepository.getAll(pageable).stream()
+    public List<TagReadDto> findAll(Pageable pageable) {
+        return tagRepository.findAll(pageable).stream()
                             .map(tagMapper::entityToReadDto)
                             .toList();
     }
 
     @Override
     @Transactional
-    public TagReadDto update(@Valid TagCreateDto updateDataEntity, Long id, LocalDateTime updateDate) {
-        Tag tag = tagRepository.get(id);
-
-        if(!tag.getUpdateDate().isEqual(updateDate)){
-            throw new OptimisticLockException(tag + "WAS ALREADY UPDATED");
-        }
+    public TagReadDto update(@Valid TagCreateDto updateDataEntity, Long id) {
+        Tag tag = tagRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         tagMapper.update(tag, updateDataEntity);
 
@@ -64,6 +57,7 @@ public class ITagServiceImpl implements IService<TagCreateDto, TagReadDto> {
     @Override
     @Transactional
     public void deleteById(Long id) {
+        tagRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         tagRepository.deleteById(id);
     }
 }

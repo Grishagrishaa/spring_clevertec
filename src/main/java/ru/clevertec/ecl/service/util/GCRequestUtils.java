@@ -1,6 +1,6 @@
 package ru.clevertec.ecl.service.util;
 
-import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateIFilter;
+import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
 
 public final class GCRequestUtils {
     private static final StringBuffer strBuffer = new StringBuffer();
@@ -44,7 +44,7 @@ public final class GCRequestUtils {
 
 
 
-    public static String getFilteredRequest(GiftCertificateIFilter filter){
+    public static String getFilteredRequest(GiftCertificateFilter filter){
         strBuffer.setLength(0);
 
         if (!filter.getTagName().isEmpty()){

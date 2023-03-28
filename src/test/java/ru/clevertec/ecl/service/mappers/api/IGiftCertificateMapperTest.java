@@ -1,6 +1,5 @@
 package ru.clevertec.ecl.service.mappers.api;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,8 +7,8 @@ import org.mapstruct.factory.Mappers;
 import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
-import ru.clevertec.ecl.utils.GiftCertificateTestBuilder;
-import ru.clevertec.ecl.utils.TagTestBuilder;
+import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
+import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
 import java.util.Collections;
 import java.util.stream.Stream;

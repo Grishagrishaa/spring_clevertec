@@ -1,18 +1,23 @@
-package ru.clevertec.ecl.utils;
+package ru.clevertec.ecl.testUtils.builder.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
-import ru.clevertec.ecl.repository.entity.Tag;
+import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 
-import static ru.clevertec.ecl.utils.TestUtils.*;
+import static ru.clevertec.ecl.testUtils.TestUtils.*;
 
+@With
 @Data
-public class GiftCertificateTestBuilder {
+@AllArgsConstructor
+@NoArgsConstructor(staticName = "with")
+public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> {
     private Long id;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
@@ -20,16 +25,6 @@ public class GiftCertificateTestBuilder {
     private String description;
     private Double price;
     private Integer duration;
-
-    public GiftCertificateTestBuilder() {
-        this.id = 1L;
-        this.createdDate = LocalDateTime.MIN;
-        this.updatedDate = LocalDateTime.MIN;
-        this.name = "Default";
-        this.description = "Default";
-        this.duration = 1000;
-        this.price = 10.00;
-    }
 
 
     public static GiftCertificateTestBuilder randomValues(){
@@ -67,6 +62,7 @@ public class GiftCertificateTestBuilder {
                 .build();
     }
 
+    @Override
     public GiftCertificate build(){
         return GiftCertificate.builder()
                 .id(id)

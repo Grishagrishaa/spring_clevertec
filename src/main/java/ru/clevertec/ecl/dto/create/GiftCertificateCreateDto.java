@@ -1,9 +1,6 @@
 package ru.clevertec.ecl.dto.create;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +21,7 @@ public class GiftCertificateCreateDto {
     private String description;
     @Min(1)
     private Double price;
-    @Min(1)
-    @Max(365)
+    @Positive
     private Integer duration;
     private List<TagCreateDto> tags;
 }
