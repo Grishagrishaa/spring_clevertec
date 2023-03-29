@@ -11,9 +11,4 @@ import java.util.Set;
 public class StructuredError {
     private final String logref;
     private final Set<ErrorMessage> errors;
-
-    public StructuredError(Set<ErrorMessage> errors) {
-        this.logref = "structured_error";
-        this.errors = errors;
-    }
 }

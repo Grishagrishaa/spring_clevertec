@@ -26,17 +26,26 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PSQLException.class)
     public ResponseEntity<ErrorMessage> handle(PSQLException e){
-        return ResponseEntity.status(400).body(new ErrorMessage(e.getServerErrorMessage().toString()));
+        return ResponseEntity.status(400).body(ErrorMessage.builder()
+                                                           .logref("error")
+                                                           .message(e.getServerErrorMessage().toString())
+                                                           .build());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessage> handle(EntityNotFoundException e){
-        return ResponseEntity.status(400).body(new ErrorMessage(ErrorMessagesUtils.TAG_NOT_FOUND));
+        return ResponseEntity.status(400).body(ErrorMessage.builder()
+                                                           .logref("error")
+                                                           .message(ErrorMessagesUtils.TAG_NOT_FOUND)
+                                                           .build());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<StructuredError> handle(ConstraintViolationException e){
-        return ResponseEntity.status(400).body(new StructuredError(buildErrorMessages(e.getConstraintViolations())));
+        return ResponseEntity.status(400).body(StructuredError.builder()
+                                                              .logref("structured_error")
+                                                              .errors(buildErrorMessages(e.getConstraintViolations()))
+                                                              .build());
     }
 
     private Set<ErrorMessage> buildErrorMessages(Set<ConstraintViolation<?>> violations) {
@@ -53,6 +62,9 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErrorMessage> handle(EmptyResultDataAccessException e){
-        return ResponseEntity.status(204).body(new ErrorMessage(e.getMessage()));
+        return ResponseEntity.status(204).body(ErrorMessage.builder()
+                                                           .logref("error")
+                                                           .message(e.getMessage())
+                                                           .build());
     }
 }

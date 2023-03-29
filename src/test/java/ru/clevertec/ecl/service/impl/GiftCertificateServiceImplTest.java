@@ -72,7 +72,7 @@ class GiftCertificateServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
-    void getShouldReturnReadDto(GiftCertificate certificate, Tag tag) {
+    void findByIdShouldReturnReadDto(GiftCertificate certificate, Tag tag) {
         TagReadDto tagReadDto = TagTestBuilder.readDto(tag);
 
         doReturn(certificate).when(certificateRepository).findById(ID);
@@ -93,7 +93,7 @@ class GiftCertificateServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
-    void getAllShouldReturnExpectedList(GiftCertificate certificate, Tag tag) {
+    void findAllPageableAndFilterShouldReturnExpectedList(GiftCertificate certificate, Tag tag) {
         Pageable pageable = PageRequest.of(0, 1);
 
         GiftCertificateReadDto readDto = GiftCertificateTestBuilder.readDto(certificate);
@@ -112,7 +112,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void getShouldThrowExceptionIfNoEntityProvided() {
+    void findByIdShouldThrowExceptionIfNoEntityProvided() {
         doThrow(EmptyResultDataAccessException.class).when(certificateRepository).findById(ID);
         assertThatThrownBy(() -> service.findById(ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
@@ -121,7 +121,7 @@ class GiftCertificateServiceImplTest {
     @Disabled("VERSION implementation removed")
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
-    void updateShouldThrowExceptionIfVersionIncorrect(GiftCertificate certificate, Tag tag) {
+    void updateByIdShouldThrowExceptionIfVersionIncorrect(GiftCertificate certificate, Tag tag) {
         GiftCertificateCreateDto createDto = GiftCertificateTestBuilder.createDto(certificate);
         createDto.setTags(Collections.singletonList(TagTestBuilder.createDto(tag)));
 
@@ -132,7 +132,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void checkDeleteByIdShouldCallRepository() {
+    void deleteByIdShouldCallRepository() {
         doNothing().when(certificateRepository).deleteById(ID);
         certificateRepository.deleteById(ID);
 

@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.repository.impl;
+package ru.clevertec.ecl.repository.impl.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
+import ru.clevertec.ecl.repository.impl.GiftCertificateRepositoryImpl;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @ExtendWith(SpringExtension.class)
-class GiftCertificateRepositoryImplTest {
+class GiftCertificateRepositoryImplIntegrationTest {
 
     private GiftCertificateRepository repository;
 

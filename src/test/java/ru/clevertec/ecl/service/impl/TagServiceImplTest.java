@@ -39,34 +39,6 @@ class TagServiceImplTest {
     private static final Long ID = 9L;
 
 
-
-    @ParameterizedTest
-    @MethodSource("provideTag")
-    void getAllShouldReturnReadDto(Tag tag) {
-        Pageable pageable = PageRequest.of(0, 2);
-
-        doReturn(Collections.singletonList(tag)).when(tagRepository).findAll(pageable);
-
-        List<TagReadDto> expected = Collections.singletonList(TagTestBuilder.readDto(tag));
-        List<TagReadDto> actual = service.findAll(pageable);
-
-        verify(tagRepository).findAll(pageable);
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideTag")
-    void getShouldReturnReadDto(Tag tag) {
-        TagReadDto expected = TagTestBuilder.readDto(tag);
-        doReturn(tag).when(tagRepository).findById(tag.getId());
-
-        TagReadDto actual = service.findById(tag.getId());
-
-        verify(tagRepository).findById(tag.getId());
-        assertThat(actual).isEqualTo(expected);
-    }
-
-
     @ParameterizedTest
     @MethodSource("provideTag")
     void createShouldReturnReadDto(Tag tag) {
@@ -83,7 +55,34 @@ class TagServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideTag")
-    void updateShouldCallRepository2Times(Tag tag) {
+    void findAllByPageableShouldReturnReadDto(Tag tag) {
+        Pageable pageable = PageRequest.of(0, 2);
+
+        doReturn(Collections.singletonList(tag)).when(tagRepository).findAll(pageable);
+
+        List<TagReadDto> expected = Collections.singletonList(TagTestBuilder.readDto(tag));
+        List<TagReadDto> actual = service.findAll(pageable);
+
+        verify(tagRepository).findAll(pageable);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTag")
+    void findByIdShouldReturnReadDto(Tag tag) {
+        TagReadDto expected = TagTestBuilder.readDto(tag);
+        doReturn(tag).when(tagRepository).findById(tag.getId());
+
+        TagReadDto actual = service.findById(tag.getId());
+
+        verify(tagRepository).findById(tag.getId());
+        assertThat(actual).isEqualTo(expected);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("provideTag")
+    void updateByIdShouldCallRepository2Times(Tag tag) {
         doReturn(tag).when(tagRepository).findById(tag.getId());
         doReturn(tag).when(tagRepository).update(tag);
 
@@ -97,7 +96,7 @@ class TagServiceImplTest {
 
 
     @Test
-    void checkDeleteByIdShouldCallRepository() {
+    void deleteByIdShouldCallRepository() {
         doNothing().when(tagRepository).deleteById(ID);
         tagRepository.deleteById(ID);
 

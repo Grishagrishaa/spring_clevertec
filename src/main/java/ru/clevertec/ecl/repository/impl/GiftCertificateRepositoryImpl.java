@@ -31,7 +31,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         entity.setUpdateDate(LocalDateTime.now());
         entity.setCreateDate(LocalDateTime.now());
         return jdbcTemplate.queryForObject(GCRequestUtils.CREATE_GC_SQL, new BeanPropertyRowMapper<>(GiftCertificate.class),
-                                           entity.getCreateDate(), entity.getUpdateDate(),
+                                           LocalDateTime.now(), LocalDateTime.now(),
                                            entity.getName(), entity.getDescription(),
                                            entity.getPrice(), entity.getDuration());
     }

@@ -11,14 +11,4 @@ public class ErrorMessage {
     private String logref;
     private String field;
     private String message;
-
-    public ErrorMessage(String message) {
-        this.logref = "error";
-        this.message = message;
-    }
-
-    public ErrorMessage(String field, String message) {
-        this.field = field;
-        this.message = message;
-    }
 }

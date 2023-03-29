@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.repository.impl;
+package ru.clevertec.ecl.repository.impl.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
+import ru.clevertec.ecl.repository.impl.TagRepositoryImpl;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
 import java.nio.file.Path;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(SpringExtension.class)
-class TagRepositoryImplTest {
+class TagRepositoryImplIntegrationTest {
     private TagRepository repository;
 
     private EmbeddedDatabase dataSource;
