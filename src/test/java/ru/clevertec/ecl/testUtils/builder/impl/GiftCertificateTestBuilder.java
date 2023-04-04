@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
+import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static ru.clevertec.ecl.testUtils.TestUtils.*;
 
@@ -42,38 +44,39 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
     }
 
     public static GiftCertificateCreateDto createDto(GiftCertificate gf){
-        return GiftCertificateCreateDto.builder()
-                .name(gf.getName())
-                .description(gf.getDescription())
-                .price(gf.getPrice())
-                .duration(gf.getDuration())
-                .build();
+        GiftCertificateCreateDto createDto = new GiftCertificateCreateDto();
+        createDto.setName(gf.getName());
+        createDto.setDescription(gf.getDescription());
+        createDto.setPrice(gf.getPrice());
+        createDto.setDuration(gf.getDuration());
+        return createDto;
     }
 
     public static GiftCertificateReadDto readDto(GiftCertificate gf){
-        return GiftCertificateReadDto.builder()
-                .id(gf.getId())
-                .createDate(gf.getCreateDate())
-                .updateDate(gf.getUpdateDate())
-                .name(gf.getName())
-                .description(gf.getDescription())
-                .price(gf.getPrice())
-                .duration(gf.getDuration())
-                .build();
+        GiftCertificateReadDto readDto = new GiftCertificateReadDto();
+
+        readDto.setId(gf.getId());
+        readDto.setCreateDate(gf.getCreateDate());
+        readDto.setUpdateDate(gf.getUpdateDate());
+        readDto.setName(gf.getName());
+        readDto.setDescription(gf.getDescription());
+        readDto.setPrice(gf.getPrice());
+        readDto.setDuration(gf.getDuration());
+
+        return readDto;
     }
 
     @Override
     public GiftCertificate build(){
-        return GiftCertificate.builder()
-                .id(id)
-                .createDate(createdDate)
-                .updateDate(updatedDate)
-                .name(name)
-                .description(description)
-                .price(price)
-                .duration(duration)
-                .build();
-
+        GiftCertificate certificate = new GiftCertificate();
+        certificate.setId(id);
+        certificate.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
+        certificate.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        certificate.setName(name);
+        certificate.setDescription(description);
+        certificate.setPrice(price);
+        certificate.setDuration(duration);
+        return certificate;
     }
 
 }

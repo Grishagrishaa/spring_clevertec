@@ -8,28 +8,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.dto.create.TagCreateDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.service.dto.create.TagCreateDto;
+import ru.clevertec.ecl.service.dto.read.TagReadDto;
 import ru.clevertec.ecl.service.TagService;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 public class TagServiceImpl implements TagService {
-    private final ITagMapper tagMapper;
+    private final TagMapper tagMapper;
     private final TagRepository tagRepository;
 
     public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
-        this.tagMapper = Mappers.getMapper(ITagMapper.class);
+        this.tagMapper = Mappers.getMapper(TagMapper.class);
     }
 
     @Override
     @Transactional
     public TagReadDto create(@Valid TagCreateDto createDto) {
-        return tagMapper.entityToReadDto(tagRepository.create(tagMapper.createDtoToEntity(createDto)));
+        Tag entity = tagMapper.createDtoToEntity(createDto);
+        return tagMapper.entityToReadDto(tagRepository.create(entity));
     }
 
     @Override
@@ -57,7 +59,7 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        tagRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        tagRepository.deleteById(id);
+        Optional<Tag> maybeTag = tagRepository.findById(id);
+        maybeTag.ifPresentOrElse(tagRepository::delete, () -> { throw new EntityNotFoundException(); });
     }
 }

@@ -1,8 +1,7 @@
-package ru.clevertec.ecl.dto.errors;
+package ru.clevertec.ecl.service.dto.errors;
 
 import lombok.Builder;
 import lombok.Getter;
-import ru.clevertec.ecl.dto.errors.ErrorMessage;
 
 import java.util.Set;
 

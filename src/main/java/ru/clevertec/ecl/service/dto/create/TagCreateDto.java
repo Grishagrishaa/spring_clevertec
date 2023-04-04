@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.dto.create;
+package ru.clevertec.ecl.service.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

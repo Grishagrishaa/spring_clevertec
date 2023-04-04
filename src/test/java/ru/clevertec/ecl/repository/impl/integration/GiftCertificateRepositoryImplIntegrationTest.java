@@ -1,52 +1,45 @@
 package ru.clevertec.ecl.repository.impl.integration;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.ecl.config.HibernateTestConf;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.impl.GiftCertificateRepositoryImpl;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
+@Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HibernateTestConf.class)
 class GiftCertificateRepositoryImplIntegrationTest {
 
-    private GiftCertificateRepository repository;
+    @Autowired
+    private SessionFactory testSessionFactory;
 
-    private EmbeddedDatabase dataSource;
+    private final GiftCertificateRepository repository = new GiftCertificateRepositoryImpl(testSessionFactory);
 
     private static final Long COUNT_OF_CERTIFICATES = 4L;
 
-    @BeforeEach
-    void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:sql/ddl.sql")
-                .addScript("classpath:sql/dml.sql")
-                .build();
-        repository = new GiftCertificateRepositoryImpl(new JdbcTemplate(dataSource));
-    }
 
     @Test
-    @Disabled("RETURNING statement unavailable in H2")
     void createShouldReturnCreatedEntity(){
         GiftCertificate certificate = GiftCertificateTestBuilder.randomValues().build();
         assertThat(certificate).isEqualTo(repository.create(certificate));
@@ -79,24 +72,13 @@ class GiftCertificateRepositoryImplIntegrationTest {
 
     @Test
     void deleteShouldRemoveEntity(){
-        repository.deleteById(1L);
+        GiftCertificate certificate = new GiftCertificate("test1", "desc1", 20.2, 3, null);
+        certificate.setCreateDate(Instant.parse("1680639466.704000000"));
+        certificate.setUpdateDate(Instant.parse("1680639466.704000000"));
+        certificate.setId(1L);//entity from dml
+
+        repository.delete(certificate);
         assertThat(repository.findAllByPageableAndCertificateFilter(PageRequest.of(0, 5), GiftCertificateFilter.defaultValues()))
                   .hasSize( COUNT_OF_CERTIFICATES.intValue() - 1);
-    }
-
-    @Test
-    void addTagsAssociationShouldInsertIntoCrossTable(){
-        List<Long> tagIds = LongStream.rangeClosed(1, COUNT_OF_CERTIFICATES)
-                                        .boxed()
-                                        .collect(Collectors.toList());
-
-        repository.addTagsAssociation(1, tagIds);
-
-        assertThat(repository.getAssociatedTags(1)).hasSize(tagIds.size());
-    }
-
-    @AfterEach
-    void clear() {
-        dataSource.shutdown();
     }
 }

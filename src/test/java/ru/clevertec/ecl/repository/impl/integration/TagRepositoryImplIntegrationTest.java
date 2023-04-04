@@ -1,55 +1,40 @@
 package ru.clevertec.ecl.repository.impl.integration;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.ecl.config.HibernateTestConf;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.repository.impl.TagRepositoryImpl;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HibernateTestConf.class)
 class TagRepositoryImplIntegrationTest {
-    private TagRepository repository;
+    @Autowired
+    private SessionFactory testSessionFactory;
 
-    private EmbeddedDatabase dataSource;
+    private final TagRepository repository = new TagRepositoryImpl(testSessionFactory);
 
     private static final Long COUNT_OF_TAGS = 4L;
-    private static final Tag TAG_FROM_DML = Tag.builder()
-                                            .id(1L)
-                                            .name("tag_name1")
-                                            .createDate(LocalDateTime.parse("2022-12-21T18:56:01.000000"))
-                                            .updateDate(LocalDateTime.parse("2022-12-21T18:56:01.000000"))
-                                            .build();
 
-    @BeforeEach
-    void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript(Path.of("classpath:sql",  "ddl.sql").toString())
-                .addScript(Path.of("classpath:sql",  "dml.sql").toString())
-                .build();
-        repository = new TagRepositoryImpl(new JdbcTemplate(dataSource));
-    }
 
     @Test
-    @Disabled("RETURNING statement unavailable in H2")
     void createShouldReturnCreatedEntity(){
         Tag tag = TagTestBuilder.randomValues().build();
         assertThat(tag).isEqualTo(repository.create(tag));
@@ -80,22 +65,23 @@ class TagRepositoryImplIntegrationTest {
 
     @Test
     void deleteShouldRemoveEntity(){
-        repository.deleteById(1L);
+        repository.delete(getTagFromDml());
         assertThat(repository.findAll(PageRequest.of(0, 5))).hasSize( COUNT_OF_TAGS.intValue() - 1);
     }
 
     @Test
     void existsShouldReturnTrueIfEntityProvided(){
-        assertThat(repository.exists(TAG_FROM_DML)).isTrue();
+        assertThat(repository.findByName(getTagFromDml().getName())).isPresent();
     }
 
     @Test
     void existsShouldReturnFalseIfEntityNotProvided(){
-        assertThat(repository.exists(TagTestBuilder.randomValues().build())).isFalse();
+        assertThat(repository.findByName(TagTestBuilder.randomValues().build().getName())).isNotPresent();
     }
 
-    @AfterEach
-    void clear() {
-        dataSource.shutdown();
+    private Tag getTagFromDml(){
+        Tag tag = new Tag("tag_name1");
+        tag.setId(1L);
+        return tag;
     }
 }

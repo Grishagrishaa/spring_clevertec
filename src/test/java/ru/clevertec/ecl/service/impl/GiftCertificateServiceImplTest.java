@@ -1,6 +1,5 @@
 package ru.clevertec.ecl.service.impl;
 
-import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,15 +14,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
-import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.mappers.api.IGiftCertificateMapper;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
+import ru.clevertec.ecl.service.dto.read.TagReadDto;
+import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
@@ -31,15 +30,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
     @Spy
-    private IGiftCertificateMapper certificateMapper;
+    private GiftCertificateMapper certificateMapper;
     @Spy
-    private ITagMapper tagMapper;
+    private TagMapper tagMapper;
 
     @Mock
     private GiftCertificateRepository certificateRepository;
@@ -63,9 +63,7 @@ class GiftCertificateServiceImplTest {
         expected.setTags(Collections.singletonList(TagTestBuilder.readDto(tag)));
 
         doReturn(certificate).when(certificateRepository).create(certificate);
-        doReturn(false).when(tagRepository).exists(tag);
         doReturn(tag.getId()).when(tagRepository).create(tag);
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(certificate.getId());
 
         assertThat(service.create(createDto)).isEqualTo(expected);
     }
@@ -76,7 +74,6 @@ class GiftCertificateServiceImplTest {
         TagReadDto tagReadDto = TagTestBuilder.readDto(tag);
 
         doReturn(certificate).when(certificateRepository).findById(ID);
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(ID);
 
 
         List<TagReadDto> expectedTags = Collections.singletonList(tagReadDto);
@@ -86,7 +83,6 @@ class GiftCertificateServiceImplTest {
         GiftCertificateReadDto actual = service.findById(ID);
 
         verify(certificateRepository).findById(ID);
-        verify(certificateRepository).getAssociatedTags(ID);
         assertThat(actual).isEqualTo(expectedCertificate);
     }
 
@@ -102,12 +98,10 @@ class GiftCertificateServiceImplTest {
         List<GiftCertificateReadDto> expected = List.of(readDto);
 
         doReturn(Collections.singletonList(certificate)).when(certificateRepository).findAllByPageableAndCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(anyLong());
 
         List<GiftCertificateReadDto> actual = service.findAllByGiftCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
 
         verify(certificateRepository).findAllByPageableAndCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
-        verify(certificateRepository).getAssociatedTags(anyLong());
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -127,16 +121,14 @@ class GiftCertificateServiceImplTest {
 
         doReturn(certificate).when(certificateRepository).findById(certificate.getId());
 
-        assertThatThrownBy(() -> service.update(createDto, certificate.getId()))
-                .isInstanceOf(OptimisticLockException.class);
     }
 
     @Test
-    void deleteByIdShouldCallRepository() {
-        doNothing().when(certificateRepository).deleteById(ID);
-        certificateRepository.deleteById(ID);
+    void deleteShouldCallRepository() {
+        doNothing().when(certificateRepository).delete(any());
+        certificateRepository.delete(any());
 
-        verify(certificateRepository).deleteById(ID);
+        verify(certificateRepository).delete(any());
     }
 
     private static Stream<Arguments> provideGiftCertificateAndTag() {

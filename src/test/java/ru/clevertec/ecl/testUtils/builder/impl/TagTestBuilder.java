@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import ru.clevertec.ecl.dto.create.TagCreateDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.service.dto.create.TagCreateDto;
+import ru.clevertec.ecl.service.dto.read.TagReadDto;
 import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static ru.clevertec.ecl.testUtils.TestUtils.*;
 
@@ -35,9 +37,10 @@ public class TagTestBuilder implements TestBuilder<Tag> {
     }
 
     public static TagCreateDto createDto(Tag tag){
-        return TagCreateDto.builder()
-                .name(tag.getName())
-                .build();
+        TagCreateDto tagCreateDto = new TagCreateDto();
+        tagCreateDto.setName(tag.getName());
+
+        return tagCreateDto;
     }
 
     public static TagReadDto readDto(Tag tag){
@@ -51,14 +54,12 @@ public class TagTestBuilder implements TestBuilder<Tag> {
 
     @Override
     public Tag build(){
-
-        return Tag.builder()
-                .id(id)
-                .createDate(createdDate)
-                .updateDate(updatedDate)
-                .name(name)
-                .build();
-
+        Tag tag = new Tag();
+        tag.setId(id);
+        tag.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
+        tag.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        tag.setName(name);
+        return tag;
     }
 
 }
