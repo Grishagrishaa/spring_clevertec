@@ -17,6 +17,6 @@ public class GiftCertificateFilter {
     private String description;
 
     public static GiftCertificateFilter defaultValues(){
-        return new GiftCertificateFilter("", "", "");
+        return GiftCertificateFilter.builder().build();
     }
 }

@@ -11,11 +11,13 @@ public interface TagRepository {
 
     Optional<Tag> findById(Long id);
 
+    Optional<Tag> findByName(String name);
+
+
     List<Tag> findAll(Pageable pageable);
 
     Tag update(Tag updateDataEntity);
 
-    void deleteById(Long id);
+    void delete(Tag entity);
 
-    boolean exists(Tag entity);
 }

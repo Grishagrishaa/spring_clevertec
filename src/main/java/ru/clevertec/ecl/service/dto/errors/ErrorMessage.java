@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.dto.errors;
+package ru.clevertec.ecl.service.dto.errors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

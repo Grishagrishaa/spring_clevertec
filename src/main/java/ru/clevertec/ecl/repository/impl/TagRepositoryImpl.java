@@ -1,68 +1,64 @@
 package ru.clevertec.ecl.repository.impl;
 
-import org.springframework.dao.DataAccessException;
+import lombok.AllArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.util.TagRequestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@AllArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
-    private final JdbcTemplate jdbcTemplate;
-
-    public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private final SessionFactory sessionFactory;
 
     @Override
     public Tag create(Tag entity) {
-        return jdbcTemplate.queryForObject(TagRequestUtils.CREATE_TAG_SQL, new BeanPropertyRowMapper<>(Tag.class),
-                                           LocalDateTime.now(), LocalDateTime.now(),
-                                           entity.getName());
+        Session session = sessionFactory.getCurrentSession();
+        session.save(entity);
+        return entity;
     }
 
     @Override
     public Optional<Tag> findById(Long id) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(TagRequestUtils.GET_TAG_BY_ID_SQL,
-                                                                   new BeanPropertyRowMapper<>(Tag.class), id));
-        }catch (DataAccessException e){
-            return Optional.empty();
-        }
+        Session session = sessionFactory.getCurrentSession();
+        return Optional.ofNullable(session.get(Tag.class, id));
     }
 
     @Override
     public List<Tag> findAll(Pageable pageable) {
-        return jdbcTemplate.query(TagRequestUtils.GET_ALL_TAGS_WITH_LIMIT_OFFSET_SQL,
-                                  new BeanPropertyRowMapper<>(Tag.class),
-                                  pageable.getPageSize(), pageable.getOffset());
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("SELECT tag FROM Tag tag", Tag.class)
+                .setFirstResult(pageable.getPageNumber())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
     }
 
     @Override
     public Tag update(Tag updateDataEntity) {
-        return jdbcTemplate.queryForObject(TagRequestUtils.UPDATE_TAG_SQL, new BeanPropertyRowMapper<>(Tag.class),
-                                           updateDataEntity.getCreateDate(), LocalDateTime.now(),
-                                           updateDataEntity.getName(), updateDataEntity.getId());
+        Session session = sessionFactory.getCurrentSession();
+        session.merge(updateDataEntity);
+        return updateDataEntity;
     }
 
 
     @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update(TagRequestUtils.DELETE_TAG_BY_ID, id);
+    public void delete(Tag entity) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(entity);
     }
 
     @Override
-    public boolean exists(Tag entity) {
-        return jdbcTemplate.query(TagRequestUtils.IS_EXISTS_TAG_BY_NAME,
-                                   new BeanPropertyRowMapper<>(Tag.class),
-                                   entity.getName())
-                           .size() != 0;
+    public Optional<Tag> findByName(String name) {
+        Session session = sessionFactory.getCurrentSession();
+        Tag maybeTag = session.createQuery("SELECT tag FROM Tag tag WHERE tag.name = :name", Tag.class)
+                .setParameter("name", name).uniqueResult();
+
+        return Optional.ofNullable(maybeTag);
     }
 }

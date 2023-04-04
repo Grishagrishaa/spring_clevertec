@@ -4,15 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ru.clevertec.ecl.dto.errors.ErrorMessage;
-import ru.clevertec.ecl.dto.errors.StructuredError;
-import ru.clevertec.ecl.service.util.ErrorMessagesUtils;
+import ru.clevertec.ecl.service.dto.errors.ErrorMessage;
+import ru.clevertec.ecl.service.dto.errors.StructuredError;
 
 import java.util.Set;
 import java.util.stream.StreamSupport;
@@ -36,7 +33,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorMessage> handle(EntityNotFoundException e){
         return ResponseEntity.status(400).body(ErrorMessage.builder()
                                                            .logref("error")
-                                                           .message(ErrorMessagesUtils.TAG_NOT_FOUND)
+                                                           .message("ENTITY NOT FOUND")
                                                            .build());
     }
 
@@ -60,11 +57,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
                 .collect(toSet());
       }
 
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorMessage> handle(EmptyResultDataAccessException e){
-        return ResponseEntity.status(204).body(ErrorMessage.builder()
-                                                           .logref("error")
-                                                           .message(e.getMessage())
-                                                           .build());
-    }
+//    @ExceptionHandler(DataAccessException.class)
+//    public ResponseEntity<ErrorMessage> handle(EmptyResultDataAccessException e){
+//        return ResponseEntity.status(204).body(ErrorMessage.builder()
+//                                                           .logref("error")
+//                                                           .message(e.getMessage())
+//                                                           .build());
+//    }
 }

@@ -9,54 +9,50 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.TagRepository;
-import ru.clevertec.ecl.repository.entity.BaseEntity;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
-import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.service.GiftCertificateService;
-import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
-import ru.clevertec.ecl.service.mappers.api.IGiftCertificateMapper;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.service.dto.create.TagCreateDto;
+import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
+import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-    private final IGiftCertificateMapper certificateMapper = Mappers.getMapper(IGiftCertificateMapper.class);
-    private final ITagMapper tagMapper = Mappers.getMapper(ITagMapper.class);
+    private final GiftCertificateMapper certificateMapper = Mappers.getMapper(GiftCertificateMapper.class);
+    private final TagMapper tagMapper = Mappers.getMapper(TagMapper.class);
 
-    private final TagRepository tagRepository;
+
     private final GiftCertificateRepository giftRepository;
+    private final TagRepository tagRepository;
 
-    public GiftCertificateServiceImpl(TagRepository tagRepository, GiftCertificateRepository giftRepository) {
-        this.tagRepository = tagRepository;
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftRepository, TagRepository tagRepository) {
         this.giftRepository = giftRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
     @Transactional
     public GiftCertificateReadDto create(@Valid GiftCertificateCreateDto createDto) {
-        List<Long> tagIds = persistUnsavedTags(createDto);
-
-        GiftCertificate giftCertificate = giftRepository.create(certificateMapper.createDtoToEntity(createDto));
-        giftRepository.addTagsAssociation(giftCertificate.getId(), tagIds);
-
-        return certificateMapper.entityToReadDto(giftCertificate, giftRepository.getAssociatedTags(giftCertificate.getId()));
+        GiftCertificate entity = certificateMapper.createDtoToEntity(createDto);
+        addPersistentTagsToEntity(entity, createDto.getTags());
+        return certificateMapper.entityToReadDto(giftRepository.create(entity));
     }
 
     @Override
     public GiftCertificateReadDto findById(Long id) {
         GiftCertificate certificate = giftRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        List<Tag> associatedTags = giftRepository.getAssociatedTags(id);
-
-        return certificateMapper.entityToReadDto(certificate, associatedTags);
+        return certificateMapper.entityToReadDto(certificate);
     }
 
     @Override
     public List<GiftCertificateReadDto> findAllByGiftCertificateFilter(Pageable pageable, GiftCertificateFilter filter) {
          return giftRepository.findAllByPageableAndCertificateFilter(pageable, filter).stream()
-                .map(gc -> certificateMapper.entityToReadDto(gc, giftRepository.getAssociatedTags(gc.getId())))
+                .map(certificateMapper::entityToReadDto)
                 .toList();
     }
 
@@ -65,32 +61,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateReadDto update(@Valid GiftCertificateCreateDto updateDataDto, Long id) {
         GiftCertificate giftCertificate = giftRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
-        giftRepository.addTagsAssociation(giftCertificate.getId(), persistUnsavedTags(updateDataDto));
         certificateMapper.update(giftCertificate, updateDataDto);
 
-        return certificateMapper.entityToReadDto(
-                giftRepository.update(giftCertificate),
-                giftRepository.getAssociatedTags(giftCertificate.getId())
-        );
+        giftCertificate.getTags().clear();
+        addPersistentTagsToEntity(giftCertificate, updateDataDto.getTags());
+
+        return certificateMapper.entityToReadDto(giftRepository.update(giftCertificate));
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        giftRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        giftRepository.deleteById(id);
+        Optional<GiftCertificate> maybeCertificate = giftRepository.findById(id);
+        maybeCertificate.ifPresentOrElse(giftRepository::delete, () -> { throw new EntityNotFoundException(); });
     }
-
 
     @Transactional
-    List<Long> persistUnsavedTags(GiftCertificateCreateDto createDto){
-        return createDto.getTags().stream()
-                .map(tagMapper::createDtoToEntity)
-                .filter(tag -> !tagRepository.exists(tag))
-                .map(tagRepository::create)
-                .map(BaseEntity::getId)
-                .toList();
+    void addPersistentTagsToEntity(GiftCertificate entity, List<TagCreateDto> tagCreateDtos) {
+        tagCreateDtos.stream()
+                     .map(tagMapper::createDtoToEntity)
+                     .map(tag -> tagRepository.findByName(tag.getName()).orElseGet(() -> tagRepository.create(tag)))
+                     .forEach(entity::addTag);
     }
-
-
 }

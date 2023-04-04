@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.dto.create;
+package ru.clevertec.ecl.service.dto.create;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class GiftCertificateCreateDto {
     @Size(min = 1, max = 50)
@@ -23,5 +21,6 @@ public class GiftCertificateCreateDto {
     private Double price;
     @Positive
     private Integer duration;
+    @NotEmpty
     private List<TagCreateDto> tags;
 }

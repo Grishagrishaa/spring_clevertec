@@ -3,16 +3,17 @@ package ru.clevertec.ecl.controler;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.clevertec.ecl.dto.create.TagCreateDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.service.dto.create.TagCreateDto;
+import ru.clevertec.ecl.service.dto.read.TagReadDto;
 import ru.clevertec.ecl.service.TagService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("${app.tagController.path}")
+@RequestMapping(value = "${app.tagController.path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TagController {
     private final TagService service;
 

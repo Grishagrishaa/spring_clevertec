@@ -4,20 +4,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
-import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
+import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
-import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
-import java.util.Collections;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class IGiftCertificateMapperTest {
-    private final IGiftCertificateMapper mapper = Mappers.getMapper(IGiftCertificateMapper.class);
+class GiftCertificateMapperTest {
+    private final GiftCertificateMapper mapper = Mappers.getMapper(GiftCertificateMapper.class);
 
 
     @ParameterizedTest
@@ -35,7 +33,7 @@ class IGiftCertificateMapperTest {
     @ParameterizedTest
     @MethodSource("provideGiftCertificate")
     void entityToReadDto(GiftCertificate giftCertificate) {
-        GiftCertificateReadDto readDto = mapper.entityToReadDto(giftCertificate, Collections.singletonList(TagTestBuilder.randomValues().build()));
+        GiftCertificateReadDto readDto = mapper.entityToReadDto(giftCertificate);
         assertAll(
                 () -> assertThat(readDto.getId()).isEqualTo(giftCertificate.getId()),
                 () -> assertThat(readDto.getName()).isEqualTo(giftCertificate.getName()),

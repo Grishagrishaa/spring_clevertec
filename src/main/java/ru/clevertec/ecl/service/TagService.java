@@ -1,8 +1,8 @@
 package ru.clevertec.ecl.service;
 
 import org.springframework.data.domain.Pageable;
-import ru.clevertec.ecl.dto.create.TagCreateDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.service.dto.create.TagCreateDto;
+import ru.clevertec.ecl.service.dto.read.TagReadDto;
 
 import java.util.List;
 

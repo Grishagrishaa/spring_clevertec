@@ -1,19 +1,19 @@
 package ru.clevertec.ecl.repository.entity;
 
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "tags", schema = "clev")
 public class Tag extends BaseEntity{
     private String name;
-
-    @Builder
-    public Tag(Long id, LocalDateTime createDate, LocalDateTime updateDate, String name) {
-        super(id, createDate, updateDate);
-        this.name = name;
-    }
 }

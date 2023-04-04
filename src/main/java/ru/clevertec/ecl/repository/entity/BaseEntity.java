@@ -1,14 +1,25 @@
 package ru.clevertec.ecl.repository.entity;
 
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Setter @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@MappedSuperclass
 public class BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
+    @CreationTimestamp
+    private Instant createDate;
+    @Version
+    private Instant updateDate;
 }

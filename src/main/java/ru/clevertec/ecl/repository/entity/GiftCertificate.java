@@ -1,26 +1,38 @@
 package ru.clevertec.ecl.repository.entity;
 
 
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "gift_certificates", schema = "clev")
 public class GiftCertificate extends BaseEntity{
     private String name;
     private String description;
     private Double price;
     private Integer duration;
+    @ManyToMany(fetch = FetchType.EAGER,
+                cascade = {
+                        CascadeType.PERSIST,
+                        CascadeType.MERGE,
+                        CascadeType.REFRESH
+                   })
+    @JoinTable(name = "gift_certificates_tags", schema = "clev",
+    joinColumns = {@JoinColumn(name = "gift_certificate_id")},
+    inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    private List<Tag> tags = new ArrayList<>();
 
-    @Builder
-    public GiftCertificate(Long id, LocalDateTime createDate, LocalDateTime updateDate, String name, String description, Double price, Integer duration) {
-        super(id, createDate, updateDate);
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
+    public void addTag(Tag tag){
+        this.tags.add(tag);
     }
 }
