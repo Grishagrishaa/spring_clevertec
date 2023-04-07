@@ -36,10 +36,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
-    @Spy
-    private GiftCertificateMapper certificateMapper;
-    @Spy
-    private TagMapper tagMapper;
 
     @Mock
     private GiftCertificateRepository certificateRepository;
