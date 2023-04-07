@@ -48,7 +48,7 @@ class GiftCertificateRepositoryImplIntegrationTest {
     @Test
     @Disabled("RETURNING statement unavailable in H2")
     void createShouldReturnCreatedEntity(){
-        GiftCertificate certificate = GiftCertificateTestBuilder.randomValues().build();
+        GiftCertificate certificate = GiftCertificateTestBuilder.defaultValues().build();
         assertThat(certificate).isEqualTo(repository.create(certificate));
     }
 

@@ -27,7 +27,22 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
     private Integer duration;
 
 
-    public static GiftCertificateTestBuilder randomValues(){
+    public static GiftCertificateTestBuilder defaultValues(){
+        GiftCertificateTestBuilder giftCertificateTestBuilder = new GiftCertificateTestBuilder();
+
+        giftCertificateTestBuilder.setId(1L);
+        giftCertificateTestBuilder.setCreatedDate(LocalDateTime.MAX);
+        giftCertificateTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        giftCertificateTestBuilder.setName("ABOBA");
+        giftCertificateTestBuilder.setDescription("DO YOU KNOW THE WAY?");
+        giftCertificateTestBuilder.setPrice(200.0);
+        giftCertificateTestBuilder.setDuration(999);
+
+        return giftCertificateTestBuilder;
+    }
+
+
+     public static GiftCertificateTestBuilder randomValues(){
         GiftCertificateTestBuilder giftCertificateTestBuilder = new GiftCertificateTestBuilder();
 
         giftCertificateTestBuilder.setId(getRandomLong());
@@ -40,6 +55,7 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
 
         return giftCertificateTestBuilder;
     }
+
 
     public static GiftCertificateCreateDto createDto(GiftCertificate gf){
         return GiftCertificateCreateDto.builder()

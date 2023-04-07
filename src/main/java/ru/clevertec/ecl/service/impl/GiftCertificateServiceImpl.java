@@ -2,7 +2,7 @@ package ru.clevertec.ecl.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.mapstruct.factory.Mappers;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,24 +15,21 @@ import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.service.GiftCertificateService;
 import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
-import ru.clevertec.ecl.service.mappers.api.IGiftCertificateMapper;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-    private final IGiftCertificateMapper certificateMapper = Mappers.getMapper(IGiftCertificateMapper.class);
-    private final ITagMapper tagMapper = Mappers.getMapper(ITagMapper.class);
 
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
 
-    public GiftCertificateServiceImpl(TagRepository tagRepository, GiftCertificateRepository giftRepository) {
-        this.tagRepository = tagRepository;
-        this.giftRepository = giftRepository;
-    }
+    private final GiftCertificateMapper certificateMapper;
+    private final TagMapper tagMapper;
 
     @Override
     @Transactional
@@ -82,8 +79,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
-    @Transactional
-    List<Long> persistUnsavedTags(GiftCertificateCreateDto createDto){
+    private List<Long> persistUnsavedTags(GiftCertificateCreateDto createDto){
         return createDto.getTags().stream()
                 .map(tagMapper::createDtoToEntity)
                 .filter(tag -> !tagRepository.exists(tag))

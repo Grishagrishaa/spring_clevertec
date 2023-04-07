@@ -2,7 +2,7 @@ package ru.clevertec.ecl.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.mapstruct.factory.Mappers;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,20 +11,17 @@ import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.dto.create.TagCreateDto;
 import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.service.TagService;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TagServiceImpl implements TagService {
-    private final ITagMapper tagMapper;
-    private final TagRepository tagRepository;
 
-    public TagServiceImpl(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-        this.tagMapper = Mappers.getMapper(ITagMapper.class);
-    }
+    private final TagMapper tagMapper;
+    private final TagRepository tagRepository;
 
     @Override
     @Transactional

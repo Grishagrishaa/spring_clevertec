@@ -2,6 +2,8 @@ package ru.clevertec.ecl.repository.impl.unit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,15 +16,13 @@ import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.repository.impl.GiftCertificateRepositoryImpl;
 import ru.clevertec.ecl.service.util.GCRequestUtils;
-import ru.clevertec.ecl.service.util.TagRequestUtils;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
-import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -33,20 +33,24 @@ class GiftCertificateRepositoryImplTest {
     @InjectMocks
     private GiftCertificateRepositoryImpl repository;
 
+    @Captor
+    ArgumentCaptor<BeanPropertyRowMapper<GiftCertificate>> rowMapperCaptor;
+
     @Test
     void createShouldReturnCreatedEntity(){
-        GiftCertificate giftCertificate = GiftCertificateTestBuilder.randomValues().build();
+        GiftCertificate entity = GiftCertificateTestBuilder.defaultValues().build();
         //Cause i use "new" in implementation -> can't mock it
-        doReturn(giftCertificate).when(jdbcTemplate).queryForObject(anyString(), any(BeanPropertyRowMapper.class),
-                                                        any(), any(), any(),
-                                                        anyString(), anyDouble(), anyInt());
-        assertThat(giftCertificate).isEqualTo(repository.create(giftCertificate));
+        doReturn(entity).when(jdbcTemplate).queryForObject(eq(GCRequestUtils.CREATE_GC_SQL), rowMapperCaptor.capture(),
+                                                            eq(entity.getCreateDate()), eq(entity.getUpdateDate()),
+                                                            eq(entity.getName()), eq(entity.getDescription()),
+                                                            eq(entity.getPrice()), eq(entity.getDuration()));
+        assertThat(entity).isEqualTo(repository.create(entity));
     }
 
     @Test
     void findByIdShouldReturnEntity() {
-        GiftCertificate giftCertificate = GiftCertificateTestBuilder.randomValues().build();
-        doReturn(giftCertificate).when(jdbcTemplate).queryForObject(anyString(), any(BeanPropertyRowMapper.class), anyLong());
+        GiftCertificate giftCertificate = GiftCertificateTestBuilder.defaultValues().build();
+        doReturn(giftCertificate).when(jdbcTemplate).queryForObject(eq(GCRequestUtils.GET_GC_BY_ID_SQL), rowMapperCaptor.capture(), eq(giftCertificate.getId()));
 
         assertThat(giftCertificate).isEqualTo(repository.findById(giftCertificate.getId()).get());
 
@@ -54,11 +58,11 @@ class GiftCertificateRepositoryImplTest {
 
     @Test
     void findByIdShouldThrowExceptionIfIdIncorrect() {
-        GiftCertificate giftCertificate = GiftCertificateTestBuilder.randomValues().build();
+        GiftCertificate giftCertificate = GiftCertificateTestBuilder.defaultValues().build();
         Optional<Tag> tagOptional = Optional.empty();
-        doReturn(null).when(jdbcTemplate).queryForObject(anyString(), any(BeanPropertyRowMapper.class), anyLong());
+        doReturn(null).when(jdbcTemplate).queryForObject(eq(GCRequestUtils.GET_GC_BY_ID_SQL), rowMapperCaptor.capture(), eq(giftCertificate.getId()));
 
-        ;
+
         assertThat(repository.findById(giftCertificate.getId())).isNotPresent();
 
     }
@@ -67,9 +71,9 @@ class GiftCertificateRepositoryImplTest {
     void findAllByPageableAndCertificateFilterShouldReturnExpectedList() {
         Pageable pageable = PageRequest.of(0, 1);
 
-        List<GiftCertificate> expected = List.of(GiftCertificateTestBuilder.randomValues().build());
+        List<GiftCertificate> expected = List.of(GiftCertificateTestBuilder.defaultValues().build());
         doReturn(expected)
-                .when(jdbcTemplate).query(anyString(), any(BeanPropertyRowMapper.class), anyInt(), anyLong());
+                .when(jdbcTemplate).query(eq(GCRequestUtils.getFilteredRequest(GiftCertificateFilter.defaultValues())), rowMapperCaptor.capture(), eq(pageable.getPageSize()), eq(pageable.getOffset()));
 
 
         assertThat(repository.findAllByPageableAndCertificateFilter(pageable, GiftCertificateFilter.defaultValues())).isEqualTo(expected);
@@ -77,17 +81,17 @@ class GiftCertificateRepositoryImplTest {
 
     @Test
     void updateShouldReturnEntityAndCallRepository() {
-        GiftCertificate giftCertificate = GiftCertificateTestBuilder.randomValues().build();
-        doReturn(giftCertificate).when(jdbcTemplate).queryForObject(anyString(), any(BeanPropertyRowMapper.class),
-                                                                    any(), any(),
-                                                                    anyString(), anyString(),
-                                                                    anyDouble(), anyInt(), anyLong());
+        GiftCertificate giftCertificate = GiftCertificateTestBuilder.defaultValues().build();
+        doReturn(giftCertificate).when(jdbcTemplate).queryForObject(eq(GCRequestUtils.UPDATE_GC_SQL), rowMapperCaptor.capture(),
+                                                                        eq(giftCertificate.getCreateDate()), eq(giftCertificate.getUpdateDate()),
+                                                                        eq(giftCertificate.getName()), eq(giftCertificate.getDescription()),
+                                                                        eq(giftCertificate.getPrice()), eq(giftCertificate.getDuration()), eq(giftCertificate.getId()));
 
         assertThat(giftCertificate).isEqualTo(repository.update(giftCertificate));
-        verify(jdbcTemplate).queryForObject(anyString(), any(BeanPropertyRowMapper.class),
-                                            any(), any(),
-                                            anyString(), anyString(),
-                                            anyDouble(), anyInt(), anyLong());
+        verify(jdbcTemplate).queryForObject(eq(GCRequestUtils.UPDATE_GC_SQL), rowMapperCaptor.capture(),
+                                                                        eq(giftCertificate.getCreateDate()), eq(giftCertificate.getUpdateDate()),
+                                                                        eq(giftCertificate.getName()), eq(giftCertificate.getDescription()),
+                                                                        eq(giftCertificate.getPrice()), eq(giftCertificate.getDuration()), eq(giftCertificate.getId()));
     }
 
     @Test

@@ -15,21 +15,24 @@ import ru.clevertec.ecl.dto.create.TagCreateDto;
 import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TagServiceImplTest {
 
     @Spy
-    private ITagMapper tagMapper;
+    private TagMapper tagMapper;
     @Mock
     private TagRepository tagRepository;
 
@@ -45,7 +48,8 @@ class TagServiceImplTest {
         TagCreateDto createDto = TagTestBuilder.createDto(tag);
         TagReadDto expected = TagTestBuilder.readDto(tag);
 
-        doReturn(tag).when(tagRepository).create(any());
+        doReturn(tag)
+                .when(tagRepository).create(any());
 
         TagReadDto actual = service.create(createDto);
 
@@ -58,7 +62,8 @@ class TagServiceImplTest {
     void findAllByPageableShouldReturnReadDto(Tag tag) {
         Pageable pageable = PageRequest.of(0, 2);
 
-        doReturn(Collections.singletonList(tag)).when(tagRepository).findAll(pageable);
+        doReturn(Collections.singletonList(tag))
+                .when(tagRepository).findAll(pageable);
 
         List<TagReadDto> expected = Collections.singletonList(TagTestBuilder.readDto(tag));
         List<TagReadDto> actual = service.findAll(pageable);
@@ -71,7 +76,8 @@ class TagServiceImplTest {
     @MethodSource("provideTag")
     void findByIdShouldReturnReadDto(Tag tag) {
         TagReadDto expected = TagTestBuilder.readDto(tag);
-        doReturn(tag).when(tagRepository).findById(tag.getId());
+        doReturn(tag)
+                .when(tagRepository).findById(tag.getId());
 
         TagReadDto actual = service.findById(tag.getId());
 
@@ -83,8 +89,10 @@ class TagServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideTag")
     void updateByIdShouldCallRepository2Times(Tag tag) {
-        doReturn(tag).when(tagRepository).findById(tag.getId());
-        doReturn(tag).when(tagRepository).update(tag);
+        doReturn(tag)
+                .when(tagRepository).findById(tag.getId());
+        doReturn(tag)
+                .when(tagRepository).update(tag);
 
         TagCreateDto createDto = TagTestBuilder.createDto(tag);
 
@@ -97,7 +105,8 @@ class TagServiceImplTest {
 
     @Test
     void deleteByIdShouldCallRepository() {
-        doNothing().when(tagRepository).deleteById(ID);
+        doNothing()
+                .when(tagRepository).deleteById(ID);
         tagRepository.deleteById(ID);
 
         verify(tagRepository).deleteById(ID);
@@ -106,11 +115,11 @@ class TagServiceImplTest {
 
     private static Stream<Arguments> provideTag() {
         return Stream.of(
-                Arguments.of(TagTestBuilder.randomValues().build()),
-                Arguments.of(TagTestBuilder.randomValues().build()),
-                Arguments.of(TagTestBuilder.randomValues().build()),
-                Arguments.of(TagTestBuilder.randomValues().build()),
-                Arguments.of(TagTestBuilder.randomValues().build())
+                Arguments.of(TagTestBuilder.defaultValues().build()),
+                Arguments.of(TagTestBuilder.defaultValues().build()),
+                Arguments.of(TagTestBuilder.defaultValues().build()),
+                Arguments.of(TagTestBuilder.defaultValues().build()),
+                Arguments.of(TagTestBuilder.defaultValues().build())
         );
     }
 

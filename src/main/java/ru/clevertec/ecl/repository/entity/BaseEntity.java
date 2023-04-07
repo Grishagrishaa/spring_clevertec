@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Setter @Getter
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"createDate", "updateDate"})
 @NoArgsConstructor
 public class BaseEntity {
     private Long id;

@@ -51,7 +51,7 @@ class TagRepositoryImplIntegrationTest {
     @Test
     @Disabled("RETURNING statement unavailable in H2")
     void createShouldReturnCreatedEntity(){
-        Tag tag = TagTestBuilder.randomValues().build();
+        Tag tag = TagTestBuilder.defaultValues().build();
         assertThat(tag).isEqualTo(repository.create(tag));
     }
 
@@ -91,7 +91,7 @@ class TagRepositoryImplIntegrationTest {
 
     @Test
     void existsShouldReturnFalseIfEntityNotProvided(){
-        assertThat(repository.exists(TagTestBuilder.randomValues().build())).isFalse();
+        assertThat(repository.exists(TagTestBuilder.defaultValues().build())).isFalse();
     }
 
     @AfterEach

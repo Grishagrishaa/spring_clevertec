@@ -9,7 +9,6 @@ import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.service.util.TagRequestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Tag create(Tag entity) {
         return jdbcTemplate.queryForObject(TagRequestUtils.CREATE_TAG_SQL, new BeanPropertyRowMapper<>(Tag.class),
-                                           LocalDateTime.now(), LocalDateTime.now(),
+                                           entity.getCreateDate(), entity.getUpdateDate(),
                                            entity.getName());
     }
 
@@ -48,7 +47,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Tag update(Tag updateDataEntity) {
         return jdbcTemplate.queryForObject(TagRequestUtils.UPDATE_TAG_SQL, new BeanPropertyRowMapper<>(Tag.class),
-                                           updateDataEntity.getCreateDate(), LocalDateTime.now(),
+                                           updateDataEntity.getCreateDate(), updateDataEntity.getUpdateDate(),
                                            updateDataEntity.getName(), updateDataEntity.getId());
     }
 

@@ -28,10 +28,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public GiftCertificate create(GiftCertificate entity) {
-        entity.setUpdateDate(LocalDateTime.now());
-        entity.setCreateDate(LocalDateTime.now());
         return jdbcTemplate.queryForObject(GCRequestUtils.CREATE_GC_SQL, new BeanPropertyRowMapper<>(GiftCertificate.class),
-                                           LocalDateTime.now(), LocalDateTime.now(),
+                                           entity.getCreateDate(), entity.getUpdateDate(),
                                            entity.getName(), entity.getDescription(),
                                            entity.getPrice(), entity.getDuration());
     }
@@ -57,7 +55,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public GiftCertificate update(GiftCertificate updateDataEntity) {
         return jdbcTemplate.queryForObject(GCRequestUtils.UPDATE_GC_SQL, new BeanPropertyRowMapper<>(GiftCertificate.class),
-                                           updateDataEntity.getCreateDate(), LocalDateTime.now(),
+                                           updateDataEntity.getCreateDate(), updateDataEntity.getUpdateDate(),
                                            updateDataEntity.getName(), updateDataEntity.getDescription(),
                                            updateDataEntity.getPrice(), updateDataEntity.getDuration(),
                                            updateDataEntity.getId());

@@ -23,6 +23,17 @@ public class TagTestBuilder implements TestBuilder<Tag> {
     private LocalDateTime updatedDate;
     private String name;
 
+    public static TagTestBuilder defaultValues(){
+        TagTestBuilder tagTestBuilder = new TagTestBuilder();
+
+        tagTestBuilder.setId(1L);
+        tagTestBuilder.setCreatedDate(LocalDateTime.MAX);
+        tagTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        tagTestBuilder.setName("ABOBA");
+
+        return tagTestBuilder;
+    }
+
     public static TagTestBuilder randomValues(){
         TagTestBuilder tagTestBuilder = new TagTestBuilder();
 

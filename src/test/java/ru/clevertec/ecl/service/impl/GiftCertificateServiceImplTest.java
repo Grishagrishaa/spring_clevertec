@@ -22,8 +22,8 @@ import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.mappers.api.IGiftCertificateMapper;
-import ru.clevertec.ecl.service.mappers.api.ITagMapper;
+import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
@@ -31,15 +31,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
     @Spy
-    private IGiftCertificateMapper certificateMapper;
+    private GiftCertificateMapper certificateMapper;
     @Spy
-    private ITagMapper tagMapper;
+    private TagMapper tagMapper;
 
     @Mock
     private GiftCertificateRepository certificateRepository;
@@ -62,10 +67,14 @@ class GiftCertificateServiceImplTest {
         GiftCertificateReadDto expected = GiftCertificateTestBuilder.readDto(certificate);
         expected.setTags(Collections.singletonList(TagTestBuilder.readDto(tag)));
 
-        doReturn(certificate).when(certificateRepository).create(certificate);
-        doReturn(false).when(tagRepository).exists(tag);
-        doReturn(tag.getId()).when(tagRepository).create(tag);
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(certificate.getId());
+        doReturn(certificate)
+                .when(certificateRepository).create(certificate);
+        doReturn(false)
+                .when(tagRepository).exists(tag);
+        doReturn(tag.getId())
+                .when(tagRepository).create(tag);
+        doReturn(Collections.singletonList(tag))
+                .when(certificateRepository).getAssociatedTags(certificate.getId());
 
         assertThat(service.create(createDto)).isEqualTo(expected);
     }
@@ -75,8 +84,10 @@ class GiftCertificateServiceImplTest {
     void findByIdShouldReturnReadDto(GiftCertificate certificate, Tag tag) {
         TagReadDto tagReadDto = TagTestBuilder.readDto(tag);
 
-        doReturn(certificate).when(certificateRepository).findById(ID);
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(ID);
+        doReturn(certificate)
+                .when(certificateRepository).findById(ID);
+        doReturn(Collections.singletonList(tag))
+                .when(certificateRepository).getAssociatedTags(ID);
 
 
         List<TagReadDto> expectedTags = Collections.singletonList(tagReadDto);
@@ -101,8 +112,10 @@ class GiftCertificateServiceImplTest {
         readDto.setTags(expectedTags);
         List<GiftCertificateReadDto> expected = List.of(readDto);
 
-        doReturn(Collections.singletonList(certificate)).when(certificateRepository).findAllByPageableAndCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
-        doReturn(Collections.singletonList(tag)).when(certificateRepository).getAssociatedTags(anyLong());
+        doReturn(Collections.singletonList(certificate))
+                .when(certificateRepository).findAllByPageableAndCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
+        doReturn(Collections.singletonList(tag))
+                .when(certificateRepository).getAssociatedTags(anyLong());
 
         List<GiftCertificateReadDto> actual = service.findAllByGiftCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
 
@@ -113,7 +126,8 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findByIdShouldThrowExceptionIfNoEntityProvided() {
-        doThrow(EmptyResultDataAccessException.class).when(certificateRepository).findById(ID);
+        doThrow(EmptyResultDataAccessException.class)
+                .when(certificateRepository).findById(ID);
         assertThatThrownBy(() -> service.findById(ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
@@ -125,7 +139,8 @@ class GiftCertificateServiceImplTest {
         GiftCertificateCreateDto createDto = GiftCertificateTestBuilder.createDto(certificate);
         createDto.setTags(Collections.singletonList(TagTestBuilder.createDto(tag)));
 
-        doReturn(certificate).when(certificateRepository).findById(certificate.getId());
+        doReturn(certificate)
+                .when(certificateRepository).findById(certificate.getId());
 
         assertThatThrownBy(() -> service.update(createDto, certificate.getId()))
                 .isInstanceOf(OptimisticLockException.class);
@@ -133,7 +148,8 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void deleteByIdShouldCallRepository() {
-        doNothing().when(certificateRepository).deleteById(ID);
+        doNothing()
+                .when(certificateRepository).deleteById(ID);
         certificateRepository.deleteById(ID);
 
         verify(certificateRepository).deleteById(ID);
@@ -141,11 +157,11 @@ class GiftCertificateServiceImplTest {
 
     private static Stream<Arguments> provideGiftCertificateAndTag() {
         return Stream.of(
-                Arguments.of(GiftCertificateTestBuilder.randomValues().build(), TagTestBuilder.randomValues().build()),
-                Arguments.of(GiftCertificateTestBuilder.randomValues().build(), TagTestBuilder.randomValues().build()),
-                Arguments.of(GiftCertificateTestBuilder.randomValues().build(), TagTestBuilder.randomValues().build()),
-                Arguments.of(GiftCertificateTestBuilder.randomValues().build(), TagTestBuilder.randomValues().build()),
-                Arguments.of(GiftCertificateTestBuilder.randomValues().build(), TagTestBuilder.randomValues().build())
+                Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build()),
+                Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build()),
+                Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build()),
+                Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build()),
+                Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build())
         );
     }
 }
