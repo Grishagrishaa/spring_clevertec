@@ -2,6 +2,8 @@ package ru.clevertec.ecl.config.repository;
 
 //import com.zaxxer.hikari.HikariConfig;
 //import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,22 +38,20 @@ public class RepositoryConfig {
 
     @Bean
     public DataSource dataSource() {
-//        HikariConfig hikariConfig = new HikariConfig();
-//        hikariConfig.setJdbcUrl(url);
-//
-//        hikariConfig.setUsername(username);
-//        hikariConfig.setPassword(password);
-//
-//        hikariConfig.setDriverClassName(driver);
-//        hikariConfig.setMaximumPoolSize(connections);
-//        return new HikariDataSource(hikariConfig);r
-        return null;
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(url);
+
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
+
+        hikariConfig.setDriverClassName(driver);
+        hikariConfig.setMaximumPoolSize(connections);
+        return new HikariDataSource(hikariConfig);
+
     }
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
-
-
         return new JdbcTemplate(dataSource());
     }
 }
