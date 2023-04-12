@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
+import org.mapstruct.factory.Mappers;
+import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.dto.create.TagCreateDto;
+import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
+import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
 import java.time.Instant;
@@ -27,6 +30,23 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
     private String description;
     private Double price;
     private Integer duration;
+
+    private TagMapper tagMapper = Mappers.getMapper(TagMapper.class);
+
+
+    public static GiftCertificateTestBuilder defaultValues(){
+        GiftCertificateTestBuilder giftCertificateTestBuilder = new GiftCertificateTestBuilder();
+
+        giftCertificateTestBuilder.setId(1L);
+        giftCertificateTestBuilder.setCreatedDate(LocalDateTime.MAX);
+        giftCertificateTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        giftCertificateTestBuilder.setName("ABOBA");
+        giftCertificateTestBuilder.setDescription("DO YOU KNOW THE WAY?");
+        giftCertificateTestBuilder.setPrice(200.0);
+        giftCertificateTestBuilder.setDuration(999);
+
+        return giftCertificateTestBuilder;
+    }
 
 
     public static GiftCertificateTestBuilder randomValues(){
@@ -49,6 +69,7 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         createDto.setDescription(gf.getDescription());
         createDto.setPrice(gf.getPrice());
         createDto.setDuration(gf.getDuration());
+        createDto.setTags(gf.getTags().stream().map(tag -> new TagCreateDto(tag.getName())).toList());
         return createDto;
     }
 

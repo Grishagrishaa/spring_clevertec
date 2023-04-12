@@ -1,18 +1,13 @@
-package ru.clevertec.ecl.service.dto.read;
+package ru.clevertec.ecl.dto.read;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Data @Builder
+@EqualsAndHashCode
+@AllArgsConstructor @NoArgsConstructor
 public class GiftCertificateReadDto {
     private Long id;
     private Instant createDate;

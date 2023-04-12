@@ -1,22 +1,29 @@
 package ru.clevertec.ecl.controler;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
-import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
+import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.service.GiftCertificateService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "${app.giftController.path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GiftCertificateController {
+
     private final GiftCertificateService service;
 
     public GiftCertificateController(GiftCertificateService service) {
@@ -35,7 +42,7 @@ public class GiftCertificateController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<GiftCertificateReadDto>> findAllByPageableAndGiftCertificateFilter(@PageableDefault Pageable pageable,
+    public ResponseEntity<Page<GiftCertificateReadDto>> findAllByPageableAndGiftCertificateFilter(@PageableDefault Pageable pageable,
                                                                                                   @Valid GiftCertificateFilter filter) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAllByGiftCertificateFilter(pageable, filter));
     }
@@ -50,4 +57,5 @@ public class GiftCertificateController {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 }

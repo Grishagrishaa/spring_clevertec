@@ -2,36 +2,33 @@ package ru.clevertec.ecl.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.mapstruct.factory.Mappers;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.service.dto.create.TagCreateDto;
-import ru.clevertec.ecl.service.dto.read.TagReadDto;
+import ru.clevertec.ecl.dto.create.TagCreateDto;
+import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.service.TagService;
 import ru.clevertec.ecl.service.mappers.api.TagMapper;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TagServiceImpl implements TagService {
+
     private final TagMapper tagMapper;
     private final TagRepository tagRepository;
-
-    public TagServiceImpl(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-        this.tagMapper = Mappers.getMapper(TagMapper.class);
-    }
 
     @Override
     @Transactional
     public TagReadDto create(@Valid TagCreateDto createDto) {
         Tag entity = tagMapper.createDtoToEntity(createDto);
-        return tagMapper.entityToReadDto(tagRepository.create(entity));
+        return tagMapper.entityToReadDto(tagRepository.save(entity));
     }
 
     @Override
@@ -40,10 +37,15 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<TagReadDto> findAll(Pageable pageable) {
-        return tagRepository.findAll(pageable).stream()
-                            .map(tagMapper::entityToReadDto)
-                            .toList();
+    public Page<TagReadDto> findAll(Pageable pageable) {
+        Page<Tag> tagPage = tagRepository.findAll(pageable);
+
+        return tagPage.map(tagMapper::entityToReadDto);
+    }
+
+    @Override
+    public TagReadDto findMostPopularWithHighestCostByUserId(Long userId) {
+        return tagMapper.entityToReadDto(tagRepository.findMostPopularWithHighestCostByUserId(userId).orElseThrow(EntityNotFoundException::new));
     }
 
     @Override
@@ -53,7 +55,7 @@ public class TagServiceImpl implements TagService {
 
         tagMapper.update(tag, updateDataEntity);
 
-        return tagMapper.entityToReadDto(tagRepository.update(tag));
+        return tagMapper.entityToReadDto(tagRepository.save(tag));
     }
 
     @Override

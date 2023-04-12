@@ -5,12 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor(staticName = "of")
 @Builder
 public class GiftCertificateFilter {
+
     @Size(min = 1, max = 20)
-    private String tagName;
+    private List<String> tagName;
     @Size(min = 1, max = 30)
     private String name;
     @Size(min = 1, max = 80)
@@ -19,4 +22,5 @@ public class GiftCertificateFilter {
     public static GiftCertificateFilter defaultValues(){
         return GiftCertificateFilter.builder().build();
     }
+
 }

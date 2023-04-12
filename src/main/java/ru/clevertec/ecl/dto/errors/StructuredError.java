@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.service.dto.errors;
+package ru.clevertec.ecl.dto.errors;
 
 import lombok.Builder;
 import lombok.Getter;

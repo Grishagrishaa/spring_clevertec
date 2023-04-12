@@ -4,18 +4,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.dto.create.TagCreateDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.dto.create.UserCreateDto;
+import ru.clevertec.ecl.dto.read.UserReadDto;
+import ru.clevertec.ecl.repository.entity.User;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface TagMapper {
+public interface UserMapper {
 
-    Tag createDtoToEntity(TagCreateDto createDto);
+    User createDtoToEntity(UserCreateDto createDto);
 
-    TagReadDto entityToReadDto(Tag entity);
+    UserReadDto entityToReadDto(User entity);
 
-    void update(@MappingTarget Tag entity, TagCreateDto updateDto);
+    void update(@MappingTarget User entity, UserCreateDto updateDto);
 
 }

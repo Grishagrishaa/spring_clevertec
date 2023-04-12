@@ -1,7 +1,13 @@
 package ru.clevertec.ecl.repository.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,12 +16,10 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "gift_certificates", schema = "clev")
+@Data @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor @NoArgsConstructor
 public class GiftCertificate extends BaseEntity{
     private String name;
     private String description;

@@ -1,20 +1,27 @@
 package ru.clevertec.ecl.controler;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.clevertec.ecl.service.dto.create.TagCreateDto;
-import ru.clevertec.ecl.service.dto.read.TagReadDto;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.ecl.dto.create.TagCreateDto;
+import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.service.TagService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "${app.tagController.path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TagController {
+
     private final TagService service;
 
     public TagController(TagService service) {
@@ -33,8 +40,13 @@ public class TagController {
 
 
     @GetMapping
-    public ResponseEntity<List<TagReadDto>> findAllByPageable(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<TagReadDto>> findAllByPageable(@PageableDefault Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
+    }
+
+    @GetMapping("/popular/{userId}")
+    public ResponseEntity<TagReadDto> findMostPopularByUserId(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findMostPopularWithHighestCostByUserId(userId));
     }
 
     @PutMapping("/{id}")
@@ -47,4 +59,5 @@ public class TagController {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 }

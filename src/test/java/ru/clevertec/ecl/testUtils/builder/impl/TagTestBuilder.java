@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import ru.clevertec.ecl.service.dto.create.TagCreateDto;
-import ru.clevertec.ecl.service.dto.read.TagReadDto;
+import ru.clevertec.ecl.dto.create.TagCreateDto;
+import ru.clevertec.ecl.dto.read.TagReadDto;
 import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
@@ -24,6 +24,17 @@ public class TagTestBuilder implements TestBuilder<Tag> {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private String name;
+
+    public static TagTestBuilder defaultValues(){
+        TagTestBuilder tagTestBuilder = new TagTestBuilder();
+
+        tagTestBuilder.setId(1L);
+        tagTestBuilder.setCreatedDate(LocalDateTime.MAX);
+        tagTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        tagTestBuilder.setName("ABOBA");
+
+        return tagTestBuilder;
+    }
 
     public static TagTestBuilder randomValues(){
         TagTestBuilder tagTestBuilder = new TagTestBuilder();

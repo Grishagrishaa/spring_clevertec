@@ -1,15 +1,14 @@
-package ru.clevertec.ecl.service.dto.read;
+package ru.clevertec.ecl.dto.read;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
-@Data
-@Builder
-@AllArgsConstructor
+@Data @Builder
+@AllArgsConstructor @NoArgsConstructor
 public class TagReadDto {
     private Long id;
     private Instant createDate;
