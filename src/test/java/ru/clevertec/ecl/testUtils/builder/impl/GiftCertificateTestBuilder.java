@@ -9,12 +9,18 @@ import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.create.TagCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
+import ru.clevertec.ecl.repository.entity.Tag;
+import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
 import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.TestBuilder;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static ru.clevertec.ecl.testUtils.TestUtils.*;
 
@@ -30,12 +36,15 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
     private String description;
     private Double price;
     private Integer duration;
+    private List<Tag> tags;
 
-    private TagMapper tagMapper = Mappers.getMapper(TagMapper.class);
+    private static TagMapper tagMapper = Mappers.getMapper(TagMapper.class);
 
 
     public static GiftCertificateTestBuilder defaultValues(){
         GiftCertificateTestBuilder giftCertificateTestBuilder = new GiftCertificateTestBuilder();
+        ArrayList<Tag> tags = new ArrayList<>();
+        tags.add(TagTestBuilder.defaultValues().build());
 
         giftCertificateTestBuilder.setId(1L);
         giftCertificateTestBuilder.setCreatedDate(LocalDateTime.MAX);
@@ -44,6 +53,7 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         giftCertificateTestBuilder.setDescription("DO YOU KNOW THE WAY?");
         giftCertificateTestBuilder.setPrice(200.0);
         giftCertificateTestBuilder.setDuration(999);
+        giftCertificateTestBuilder.setTags(tags);
 
         return giftCertificateTestBuilder;
     }
@@ -83,6 +93,7 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         readDto.setDescription(gf.getDescription());
         readDto.setPrice(gf.getPrice());
         readDto.setDuration(gf.getDuration());
+        readDto.setTags(gf.getTags().stream().map(tagMapper::entityToReadDto).toList());
 
         return readDto;
     }
@@ -97,6 +108,7 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         certificate.setDescription(description);
         certificate.setPrice(price);
         certificate.setDuration(duration);
+        certificate.setTags(tags);
         return certificate;
     }
 

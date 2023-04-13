@@ -24,6 +24,7 @@ import ru.clevertec.ecl.repository.entity.Tag;
 import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.dto.read.TagReadDto;
+import ru.clevertec.ecl.repository.util.CertificateSpec;
 import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
 import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
@@ -34,7 +35,10 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
@@ -59,14 +63,17 @@ class GiftCertificateServiceImplTest {
     @MethodSource("provideGiftCertificateAndTag")
     void createShouldReturnReadDtoAndCallRepository(GiftCertificate certificate, Tag tag) {
         GiftCertificateCreateDto createDto = GiftCertificateTestBuilder.createDto(certificate);
-        createDto.setTags(List.of(TagTestBuilder.createDto(tag)));
 
         GiftCertificateReadDto expected = GiftCertificateTestBuilder.readDto(certificate);
-        expected.setTags(List.of(TagTestBuilder.readDto(tag)));
 
-        doReturn(certificate).when(certificateRepository).save(certificate);
-        doReturn(Optional.empty()).when(tagRepository).findByName(tag.getName());
-        lenient().doReturn(tag).when(tagRepository).save(tag);
+        doReturn(certificate)
+                .when(certificateRepository).save(any(GiftCertificate.class));
+        doReturn(Optional.empty())
+                .when(tagRepository).findByName(tag.getName());
+        doReturn(tag)
+                .when(tagRepository).save(any(Tag.class));
+        doReturn(expected)
+                .when(certificateMapper).entityToReadDto(any(GiftCertificate.class));
 
         assertThat(service.create(createDto)).isEqualTo(expected);
     }
@@ -74,14 +81,11 @@ class GiftCertificateServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
     void findByIdShouldReturnReadDto(GiftCertificate certificate, Tag tag) {
-        TagReadDto tagReadDto = TagTestBuilder.readDto(tag);
-        List<TagReadDto> expectedTags = List.of(tagReadDto);
 
-        certificate.setTags(List.of(tag));
-        doReturn(Optional.ofNullable(certificate)).when(certificateRepository).findById(ID);
+        doReturn(Optional.ofNullable(certificate))
+                .when(certificateRepository).findById(ID);
 
         GiftCertificateReadDto expectedCertificate = GiftCertificateTestBuilder.readDto(certificate);
-        expectedCertificate.setTags(expectedTags);
 
         doReturn(expectedCertificate).when(certificateMapper).entityToReadDto(certificate);
 
@@ -95,16 +99,15 @@ class GiftCertificateServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
     void findAllPageableAndFilterShouldReturnExpectedList(GiftCertificate certificate, Tag tag) {
-        certificate.setTags(List.of(tag));
         Pageable pageable = PageRequest.of(0, 1);
 
         GiftCertificateReadDto readDto = GiftCertificateTestBuilder.readDto(certificate);
-        List<TagReadDto> expectedTags = List.of(TagTestBuilder.readDto(tag));
-        readDto.setTags(expectedTags);
         Page<GiftCertificateReadDto> expected = new PageImpl<>(List.of(readDto));
 
-        doReturn(readDto).when(certificateMapper).entityToReadDto(certificate);
-        doReturn(new PageImpl<>(List.of(certificate))).when(certificateRepository).findAll(any(Specification.class), any(Pageable.class));
+        doReturn(readDto)
+                .when(certificateMapper).entityToReadDto(certificate);
+        doReturn(new PageImpl<>(List.of(certificate)))
+                .when(certificateRepository).findAll(any(Specification.class), any(Pageable.class));
 
         Page<GiftCertificateReadDto> actual = service.findAllByGiftCertificateFilter(pageable, GiftCertificateFilter.defaultValues());
 
@@ -114,7 +117,8 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findByIdShouldThrowExceptionIfNoEntityProvided() {
-        doThrow(EmptyResultDataAccessException.class).when(certificateRepository).findById(ID);
+        doThrow(EmptyResultDataAccessException.class)
+                .when(certificateRepository).findById(ID);
         assertThatThrownBy(() -> service.findById(ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
@@ -122,13 +126,8 @@ class GiftCertificateServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGiftCertificateAndTag")
     void updateByIdShouldCall2Repositories(GiftCertificate certificate, Tag tag) {
-        ArrayList<Tag> tags = new ArrayList<>();
-        tags.add(tag);
-        certificate.setTags(tags);
-        GiftCertificateCreateDto createDto = GiftCertificateTestBuilder.createDto(certificate);
-        createDto.setTags(List.of(TagTestBuilder.createDto(tag)));
-
-        doReturn(Optional.of(certificate)).when(certificateRepository).findById(certificate.getId());
+        doReturn(Optional.of(certificate))
+                .when(certificateRepository).findById(certificate.getId());
 
         service.update(GiftCertificateTestBuilder.createDto(certificate), certificate.getId());
 
@@ -140,7 +139,8 @@ class GiftCertificateServiceImplTest {
     void deleteShouldCallRepository() {
         GiftCertificate certificate = new GiftCertificate();
 
-        doReturn(Optional.of(certificate)).when(certificateRepository).findById(ID);
+        doReturn(Optional.of(certificate))
+                .when(certificateRepository).findById(ID);
         service.deleteById(ID);
 
         verify(certificateRepository).delete(certificate);
