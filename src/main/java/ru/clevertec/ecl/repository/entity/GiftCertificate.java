@@ -21,6 +21,7 @@ import java.util.List;
 @Data @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor @NoArgsConstructor
 public class GiftCertificate extends BaseEntity{
+
     private String name;
     private String description;
     private Double price;
@@ -39,4 +40,5 @@ public class GiftCertificate extends BaseEntity{
     public void addTag(Tag tag){
         this.tags.add(tag);
     }
+
 }

@@ -28,4 +28,5 @@ public class BaseEntity {
     private Instant createDate;
     @Version
     private Instant updateDate;
+
 }

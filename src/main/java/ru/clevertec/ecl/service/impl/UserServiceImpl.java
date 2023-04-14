@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
-
     @Override
     public UserReadDto findById(Long id) {
         return mapper.entityToReadDto(repository.findById(id).orElseThrow(EntityNotFoundException::new));
@@ -31,4 +30,5 @@ public class UserServiceImpl implements UserService {
 
         return page.map(mapper::entityToReadDto);
     }
+
 }

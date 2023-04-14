@@ -15,6 +15,7 @@ import java.util.List;
 @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
 public class GiftCertificateCreateDto {
+
     @Size(min = 1, max = 50)
     @NotBlank(message = "Name is mandatory")
     private String name;
@@ -27,4 +28,5 @@ public class GiftCertificateCreateDto {
     private Integer duration;
     @NotEmpty
     private List<TagCreateDto> tags;
+
 }

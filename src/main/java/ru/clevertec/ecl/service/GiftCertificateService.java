@@ -7,6 +7,7 @@ import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 
 public interface GiftCertificateService {
+
     GiftCertificateReadDto create(GiftCertificateCreateDto createDto);
 
     GiftCertificateReadDto findById(Long id);
@@ -16,4 +17,5 @@ public interface GiftCertificateService {
     GiftCertificateReadDto update(GiftCertificateCreateDto updateDataEntity, Long id);
 
     void deleteById(Long id);
+
 }

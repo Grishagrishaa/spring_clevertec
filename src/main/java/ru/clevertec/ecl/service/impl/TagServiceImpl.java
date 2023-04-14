@@ -33,7 +33,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagReadDto findById(Long id) {
-        return tagMapper.entityToReadDto(tagRepository.findById(id).orElseThrow(EntityNotFoundException::new));
+        return tagMapper.entityToReadDto(tagRepository.findById(id)
+                                    .orElseThrow(EntityNotFoundException::new));
     }
 
     @Override
@@ -64,4 +65,5 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> maybeTag = tagRepository.findById(id);
         maybeTag.ifPresentOrElse(tagRepository::delete, () -> { throw new EntityNotFoundException(); });
     }
+
 }

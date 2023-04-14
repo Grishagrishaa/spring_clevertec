@@ -10,6 +10,8 @@ public interface OrderService {
 
     Page<Order> findAllByUserId(Pageable pageable, Long userId);
 
+    Order findByUserIdAndOrderId(Long userId, Long orderId);
+
     Order makeOrder(@Valid OrderDetails orderDetails);
 
 }

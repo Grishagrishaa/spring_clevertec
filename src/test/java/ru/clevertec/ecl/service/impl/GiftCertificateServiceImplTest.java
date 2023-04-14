@@ -17,20 +17,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
+import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 import ru.clevertec.ecl.repository.entity.Tag;
-import ru.clevertec.ecl.dto.create.GiftCertificateCreateDto;
-import ru.clevertec.ecl.dto.read.GiftCertificateReadDto;
-import ru.clevertec.ecl.dto.read.TagReadDto;
-import ru.clevertec.ecl.repository.util.CertificateSpec;
 import ru.clevertec.ecl.service.mappers.api.GiftCertificateMapper;
 import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 import ru.clevertec.ecl.testUtils.builder.impl.TagTestBuilder;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -155,4 +154,5 @@ class GiftCertificateServiceImplTest {
                 Arguments.of(GiftCertificateTestBuilder.defaultValues().build(), TagTestBuilder.defaultValues().build())
         );
     }
+
 }

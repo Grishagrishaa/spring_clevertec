@@ -1,5 +1,6 @@
 package ru.clevertec.ecl.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order findByUserIdAndOrderId(Long userId, Long orderId) {
+        return orderRepository.findByUserIdAndId(userId, orderId)
+                                            .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
     public Order makeOrder(@Valid OrderDetails orderDetails) {
         Optional<User> maybeUser = userRepository.findById(orderDetails.getUserId());
         Optional<GiftCertificate> maybeCertificate = certificateRepository.findById(orderDetails.getGiftCertificateId());
@@ -43,4 +50,5 @@ public class OrderServiceImpl implements OrderService {
                 .setGiftCertificate(maybeCertificate.get())
                 .build());
     }
+
 }
