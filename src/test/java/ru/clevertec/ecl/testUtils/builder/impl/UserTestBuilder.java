@@ -23,8 +23,8 @@ import static ru.clevertec.ecl.testUtils.TestUtils.getRandomString;
 public class UserTestBuilder implements TestBuilder<User> {
 
     private Long id;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private Instant createdDate;
+    private Instant updatedDate;
     private String mail;
     private String nick;
 
@@ -33,8 +33,8 @@ public class UserTestBuilder implements TestBuilder<User> {
         UserTestBuilder userTestBuilder = new UserTestBuilder();
 
         userTestBuilder.setId(1L);
-        userTestBuilder.setCreatedDate(LocalDateTime.MAX);
-        userTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        userTestBuilder.setCreatedDate(null);
+        userTestBuilder.setUpdatedDate(null);
         userTestBuilder.setMail("ABOBA@");
         userTestBuilder.setNick("ABOBA");
 
@@ -45,8 +45,8 @@ public class UserTestBuilder implements TestBuilder<User> {
         UserTestBuilder userTestBuilder = new UserTestBuilder();
 
         userTestBuilder.setId(getRandomLong());
-        userTestBuilder.setCreatedDate(LocalDateTime.now());
-        userTestBuilder.setUpdatedDate(LocalDateTime.now());
+        userTestBuilder.setCreatedDate(Instant.now());
+        userTestBuilder.setUpdatedDate(Instant.now());
         userTestBuilder.setMail(getRandomString());
         userTestBuilder.setNick(getRandomString());
 
@@ -75,8 +75,8 @@ public class UserTestBuilder implements TestBuilder<User> {
     public User build(){
         User user = new User();
         user.setId(id);
-        user.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
-        user.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        user.setCreateDate(createdDate);
+        user.setUpdateDate(updatedDate);
         user.setMail(mail);
         user.setNick(nick);
 

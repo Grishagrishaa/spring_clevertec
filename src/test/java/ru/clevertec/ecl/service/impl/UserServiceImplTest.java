@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import ru.clevertec.ecl.dto.read.UserReadDto;
 import ru.clevertec.ecl.repository.UserRepository;
 import ru.clevertec.ecl.repository.entity.User;
-import ru.clevertec.ecl.service.mappers.api.TagMapper;
 import ru.clevertec.ecl.service.mappers.api.UserMapper;
 import ru.clevertec.ecl.testUtils.builder.impl.UserTestBuilder;
 
@@ -56,7 +55,7 @@ class UserServiceImplTest {
 
 
         Page<UserReadDto> expected = fromDb.map(mapper::entityToReadDto);
-        Page<UserReadDto> actual = userService.findAll(pageable);
+        Page<UserReadDto> actual = userService.findAllByPageable(pageable);
 
         verify(userRepository).findAll(pageable);
         assertThat(actual).isEqualTo(expected);

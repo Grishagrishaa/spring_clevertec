@@ -30,8 +30,8 @@ import static ru.clevertec.ecl.testUtils.TestUtils.*;
 @NoArgsConstructor(staticName = "with")
 public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> {
     private Long id;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private Instant createdDate;
+    private Instant updatedDate;
     private String name;
     private String description;
     private Double price;
@@ -46,9 +46,9 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         ArrayList<Tag> tags = new ArrayList<>();
         tags.add(TagTestBuilder.defaultValues().build());
 
-        giftCertificateTestBuilder.setId(1L);
-        giftCertificateTestBuilder.setCreatedDate(LocalDateTime.MAX);
-        giftCertificateTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        giftCertificateTestBuilder.setId(null);
+        giftCertificateTestBuilder.setUpdatedDate(null);
+        giftCertificateTestBuilder.setUpdatedDate(null);
         giftCertificateTestBuilder.setName("ABOBA");
         giftCertificateTestBuilder.setDescription("DO YOU KNOW THE WAY?");
         giftCertificateTestBuilder.setPrice(200.0);
@@ -63,8 +63,8 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
         GiftCertificateTestBuilder giftCertificateTestBuilder = new GiftCertificateTestBuilder();
 
         giftCertificateTestBuilder.setId(getRandomLong());
-        giftCertificateTestBuilder.setCreatedDate(LocalDateTime.now());
-        giftCertificateTestBuilder.setUpdatedDate(LocalDateTime.now());
+        giftCertificateTestBuilder.setCreatedDate(Instant.now());
+        giftCertificateTestBuilder.setUpdatedDate(Instant.now());
         giftCertificateTestBuilder.setName(getRandomString());
         giftCertificateTestBuilder.setDescription(getRandomString());
         giftCertificateTestBuilder.setPrice(getRandomDouble());
@@ -102,8 +102,8 @@ public class GiftCertificateTestBuilder implements TestBuilder<GiftCertificate> 
     public GiftCertificate build(){
         GiftCertificate certificate = new GiftCertificate();
         certificate.setId(id);
-        certificate.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
-        certificate.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        certificate.setCreateDate(createdDate);
+        certificate.setUpdateDate(updatedDate);
         certificate.setName(name);
         certificate.setDescription(description);
         certificate.setPrice(price);

@@ -29,8 +29,8 @@ import static ru.clevertec.ecl.testUtils.TestUtils.*;
 @NoArgsConstructor(staticName = "with")
 public class OrderTestBuilder implements TestBuilder<Order> {
     private Long id;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private Instant createdDate;
+    private Instant updatedDate;
     private Double cost;
     private Instant purchaseTime;
     private User user;
@@ -40,13 +40,13 @@ public class OrderTestBuilder implements TestBuilder<Order> {
     public static OrderTestBuilder defaultValues(){
         OrderTestBuilder orderTestBuilder = new OrderTestBuilder();
 
-        orderTestBuilder.setId(1L);
-        orderTestBuilder.setCreatedDate(LocalDateTime.MAX);
-        orderTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        orderTestBuilder.setId(null);
+        orderTestBuilder.setCreatedDate(null);
+        orderTestBuilder.setUpdatedDate(null);
         orderTestBuilder.setCost(20.0);
         orderTestBuilder.setPurchaseTime(Instant.MAX);
-        orderTestBuilder.setUser(UserTestBuilder.defaultValues().build());
-        orderTestBuilder.setGiftCertificate(GiftCertificateTestBuilder.defaultValues().build());
+        orderTestBuilder.setUser(UserTestBuilder.defaultValues().withId(9L).build());
+        orderTestBuilder.setGiftCertificate(GiftCertificateTestBuilder.defaultValues().withId(9L).build());
 
         return orderTestBuilder;
     }
@@ -56,8 +56,8 @@ public class OrderTestBuilder implements TestBuilder<Order> {
         OrderTestBuilder orderTestBuilder = new OrderTestBuilder();
 
         orderTestBuilder.setId(getRandomLong());
-        orderTestBuilder.setCreatedDate(LocalDateTime.now());
-        orderTestBuilder.setUpdatedDate(LocalDateTime.now());
+        orderTestBuilder.setCreatedDate(Instant.now());
+        orderTestBuilder.setUpdatedDate(Instant.now());
         orderTestBuilder.setCost(getRandomDouble());
         orderTestBuilder.setPurchaseTime(Instant.MAX);
         orderTestBuilder.setUser(UserTestBuilder.randomValues().build());
@@ -70,8 +70,8 @@ public class OrderTestBuilder implements TestBuilder<Order> {
     public Order build(){
         Order order = new Order();
         order.setId(id);
-        order.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
-        order.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        order.setCreateDate(createdDate);
+        order.setUpdateDate(updatedDate);
         order.setCost(cost);
         order.setPurchaseTime(purchaseTime);
         order.setUser(user);

@@ -21,16 +21,16 @@ import static ru.clevertec.ecl.testUtils.TestUtils.*;
 @NoArgsConstructor(staticName = "with")
 public class TagTestBuilder implements TestBuilder<Tag> {
     private Long id;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private Instant createdDate;
+    private Instant updatedDate;
     private String name;
 
     public static TagTestBuilder defaultValues(){
         TagTestBuilder tagTestBuilder = new TagTestBuilder();
 
-        tagTestBuilder.setId(1L);
-        tagTestBuilder.setCreatedDate(LocalDateTime.MAX);
-        tagTestBuilder.setUpdatedDate(LocalDateTime.MIN);
+        tagTestBuilder.setId(null);
+        tagTestBuilder.setCreatedDate(null);
+        tagTestBuilder.setUpdatedDate(null);
         tagTestBuilder.setName("ABOBA");
 
         return tagTestBuilder;
@@ -40,8 +40,8 @@ public class TagTestBuilder implements TestBuilder<Tag> {
         TagTestBuilder tagTestBuilder = new TagTestBuilder();
 
         tagTestBuilder.setId(getRandomLong());
-        tagTestBuilder.setCreatedDate(LocalDateTime.now());
-        tagTestBuilder.setUpdatedDate(LocalDateTime.now());
+        tagTestBuilder.setCreatedDate(Instant.now());
+        tagTestBuilder.setUpdatedDate(Instant.now());
         tagTestBuilder.setName(getRandomString());
 
         return tagTestBuilder;
@@ -67,8 +67,8 @@ public class TagTestBuilder implements TestBuilder<Tag> {
     public Tag build(){
         Tag tag = new Tag();
         tag.setId(id);
-        tag.setCreateDate(Instant.ofEpochSecond(createdDate.toEpochSecond(ZoneOffset.UTC)));
-        tag.setUpdateDate(Instant.ofEpochSecond(updatedDate.toEpochSecond(ZoneOffset.UTC)));
+        tag.setCreateDate(createdDate);
+        tag.setUpdateDate(updatedDate);
         tag.setName(name);
         return tag;
     }
