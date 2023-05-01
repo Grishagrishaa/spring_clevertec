@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.controler;
+package ru.clevertec.ecl.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -6,8 +6,15 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.ecl.controller.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
 import ru.clevertec.ecl.service.GiftCertificateService;
@@ -34,7 +41,7 @@ public class GiftCertificateController {
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<GiftCertificateReadDto>> findAllByPageableAndGiftCertificateFilter(@PageableDefault Pageable pageable,
                                                                                                   @Valid GiftCertificateFilter filter) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAllByGiftCertificateFilter(pageable, filter));

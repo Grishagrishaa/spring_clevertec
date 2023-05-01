@@ -1,7 +1,7 @@
 package ru.clevertec.ecl.service;
 
 import org.springframework.data.domain.Pageable;
-import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import ru.clevertec.ecl.controller.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.service.dto.create.GiftCertificateCreateDto;
 import ru.clevertec.ecl.service.dto.read.GiftCertificateReadDto;
 

@@ -1,9 +1,8 @@
 package ru.clevertec.ecl.repository.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import ru.clevertec.ecl.repository.TagRepository;
@@ -13,8 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
+
     private final SessionFactory sessionFactory;
 
     @Override

@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.controler.pagination.filter;
+package ru.clevertec.ecl.controller.pagination.filter;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

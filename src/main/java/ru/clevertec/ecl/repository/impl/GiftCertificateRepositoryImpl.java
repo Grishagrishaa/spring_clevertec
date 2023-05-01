@@ -1,22 +1,23 @@
 package ru.clevertec.ecl.repository.impl;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import ru.clevertec.ecl.controller.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private final SessionFactory sessionFactory;
 
@@ -41,9 +42,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         Root<GiftCertificate> root = query.from(GiftCertificate.class);
 
         CriteriaQuery<GiftCertificate> queryByName = query.select(root)
-                .where(filter.getName() == null ? cb.isTrue(cb.literal(true)) : cb.like(root.get("name"), "%" + filter.getName() + "%"),
-                       filter.getDescription() == null ? cb.isTrue(cb.literal(true)) : cb.like(root.get("description"), "%" + filter.getDescription() + "%"),
-                       filter.getTagName() == null ? cb.isTrue(cb.literal(true)) : cb.equal(root.join("tags").get("name"), filter.getTagName()));
+                .where( !Objects.isNull( filter.getName()) ? cb.isTrue(cb.literal(true)) : cb.like(root.get("name"), "%" + filter.getName() + "%"),
+                        !Objects.isNull( filter.getDescription()) ? cb.isTrue(cb.literal(true)) : cb.like(root.get("description"), "%" + filter.getDescription() + "%"),
+                        !Objects.isNull( filter.getTagName()) ? cb.isTrue(cb.literal(true)) : cb.equal(root.join("tags").get("name"), filter.getTagName()));
 
         return session.createQuery(queryByName)
                       .setFirstResult(pageable.getPageNumber())

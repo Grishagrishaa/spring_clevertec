@@ -2,11 +2,12 @@ package ru.clevertec.ecl.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.clevertec.ecl.controler.pagination.filter.GiftCertificateFilter;
+import ru.clevertec.ecl.controller.pagination.filter.GiftCertificateFilter;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.TagRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
@@ -22,18 +23,14 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class GiftCertificateServiceImpl implements GiftCertificateService {
+
     private final GiftCertificateMapper certificateMapper = Mappers.getMapper(GiftCertificateMapper.class);
     private final TagMapper tagMapper = Mappers.getMapper(TagMapper.class);
 
-
     private final GiftCertificateRepository giftRepository;
     private final TagRepository tagRepository;
-
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftRepository, TagRepository tagRepository) {
-        this.giftRepository = giftRepository;
-        this.tagRepository = tagRepository;
-    }
 
     @Override
     @Transactional

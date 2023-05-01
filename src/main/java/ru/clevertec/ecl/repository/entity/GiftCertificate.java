@@ -1,7 +1,13 @@
 package ru.clevertec.ecl.repository.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,8 +34,8 @@ public class GiftCertificate extends BaseEntity{
                         CascadeType.REFRESH
                    })
     @JoinTable(name = "gift_certificates_tags", schema = "clev",
-    joinColumns = {@JoinColumn(name = "gift_certificate_id")},
-    inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+               joinColumns = {@JoinColumn(name = "gift_certificate_id")},
+               inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private List<Tag> tags = new ArrayList<>();
 
     public void addTag(Tag tag){

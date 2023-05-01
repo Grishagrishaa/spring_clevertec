@@ -1,4 +1,4 @@
-package ru.clevertec.ecl.controler.handler;
+package ru.clevertec.ecl.controller.handler;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
@@ -57,11 +57,4 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
                 .collect(toSet());
       }
 
-//    @ExceptionHandler(DataAccessException.class)
-//    public ResponseEntity<ErrorMessage> handle(EmptyResultDataAccessException e){
-//        return ResponseEntity.status(204).body(ErrorMessage.builder()
-//                                                           .logref("error")
-//                                                           .message(e.getMessage())
-//                                                           .build());
-//    }
 }
