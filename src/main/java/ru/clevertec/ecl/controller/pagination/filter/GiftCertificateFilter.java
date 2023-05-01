@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor(staticName = "of")
 @Builder
 public class GiftCertificateFilter {
+
     @Size(min = 1, max = 20)
     private String tagName;
     @Size(min = 1, max = 30)
@@ -19,4 +20,5 @@ public class GiftCertificateFilter {
     public static GiftCertificateFilter defaultValues(){
         return GiftCertificateFilter.builder().build();
     }
+
 }

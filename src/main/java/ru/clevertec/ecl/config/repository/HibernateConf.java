@@ -15,6 +15,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 public class HibernateConf {
+
     @Value("${spring.datasource.url}")
     private String url;
     @Value("${spring.datasource.username}")
@@ -68,4 +69,5 @@ public class HibernateConf {
         properties.put("hibernate.hbm2ddl.auto", autoDDL);
         return properties;
     }
+
 }

@@ -19,6 +19,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
+
     private final SessionFactory sessionFactory;
 
     @Override

@@ -1,5 +1,6 @@
 package ru.clevertec.ecl.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "${app.tagController.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class TagController {
-    private final TagService service;
 
-    public TagController(TagService service) {
-        this.service = service;
-    }
+    private final TagService service;
 
     @PostMapping
     public ResponseEntity<TagReadDto> create(@RequestBody TagCreateDto createDto) {

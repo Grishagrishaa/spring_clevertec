@@ -1,6 +1,7 @@
 package ru.clevertec.ecl.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -23,13 +24,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "${app.giftController.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class GiftCertificateController {
+
     private final GiftCertificateService service;
-
-    public GiftCertificateController(GiftCertificateService service) {
-        this.service = service;
-    }
-
 
     @PostMapping
     public ResponseEntity<GiftCertificateReadDto> create(@RequestBody GiftCertificateCreateDto createDto) {
