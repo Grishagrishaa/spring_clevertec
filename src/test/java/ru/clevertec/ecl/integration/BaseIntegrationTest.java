@@ -25,4 +25,8 @@ public abstract class BaseIntegrationTest {
     static void postgresProperties(DynamicPropertyRegistry registry){
         registry.add("spring.datasource.url", container::getJdbcUrl);
     }
+
+    protected static String camelToSnake(String str){
+        return str.replaceAll("([A-Z][a-z])", "_$1").toLowerCase();
+    }
 }

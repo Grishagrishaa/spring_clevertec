@@ -10,5 +10,4 @@ import ru.clevertec.ecl.repository.entity.GiftCertificate;
 @Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long>,
                                              JpaSpecificationExecutor<GiftCertificate> {
-
 }

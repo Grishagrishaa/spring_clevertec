@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
+import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import ru.clevertec.ecl.repository.listeners.OrderListener;
 
 import java.time.Instant;
@@ -21,6 +23,7 @@ import java.time.Instant;
 })
 @EntityListeners(OrderListener.class)
 @Builder(setterPrefix = "set")
+@FieldNameConstants(innerTypeName = "OrderFields")
 @Data @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor @NoArgsConstructor
 public class Order extends BaseEntity{

@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Page<UserReadDto>> findAll(@PageableDefault Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAllByPageable(pageable));
     }
 
 }

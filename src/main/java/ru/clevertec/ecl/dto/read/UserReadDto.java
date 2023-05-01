@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.Instant;
 
 
 @Data @Builder
+@FieldNameConstants
 @AllArgsConstructor @NoArgsConstructor
 public class UserReadDto {
 

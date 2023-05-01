@@ -33,8 +33,6 @@ class GiftCertificateServiceImplTest extends BaseIntegrationTest {
 
     private final GiftCertificateServiceImpl service;
 
-    private static final Long LAST_ENTITY_ID = 9L;
-
 
     @Test
     void createShouldReturnReadDto() {

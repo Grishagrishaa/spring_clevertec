@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ActiveProfiles("test")
 @SpringBootTest
+@ActiveProfiles("test")
 public @interface IT {
 }

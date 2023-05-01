@@ -45,8 +45,8 @@ public class OrderTestBuilder implements TestBuilder<Order> {
         orderTestBuilder.setUpdatedDate(null);
         orderTestBuilder.setCost(20.0);
         orderTestBuilder.setPurchaseTime(Instant.MAX);
-        orderTestBuilder.setUser(UserTestBuilder.defaultValues().withId(9L).build());
-        orderTestBuilder.setGiftCertificate(GiftCertificateTestBuilder.defaultValues().withId(9L).build());
+        orderTestBuilder.setUser(UserTestBuilder.defaultValues().withId(8L).build());
+        orderTestBuilder.setGiftCertificate(GiftCertificateTestBuilder.defaultValues().withId(8L).build());
 
         return orderTestBuilder;
     }

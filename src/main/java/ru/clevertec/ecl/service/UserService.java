@@ -8,6 +8,6 @@ public interface UserService {
 
     UserReadDto findById(Long id);
 
-    Page<UserReadDto> findAll(Pageable pageable);
+    Page<UserReadDto> findAllByPageable(Pageable pageable);
 
 }

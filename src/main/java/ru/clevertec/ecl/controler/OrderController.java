@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,14 +30,14 @@ public class OrderController {
     }
 
     @GetMapping("/{userId}/order_id/{orderId}")
-    public ResponseEntity<Order> findAllByUserId(@PathVariable Long userId,
-                                                 @PathVariable Long orderId){
+    public ResponseEntity<Order> findByUserIdAndOrderId(@PathVariable Long userId,
+                                                        @PathVariable Long orderId){
         return ResponseEntity.ok(service.findByUserIdAndOrderId(userId, orderId));
     }
 
     @PostMapping
     public ResponseEntity<Order> makeOrder(@RequestBody OrderDetails orderDetails){
-        return ResponseEntity.ok(service.makeOrder(orderDetails));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.makeOrder(orderDetails));
     }
 
 }

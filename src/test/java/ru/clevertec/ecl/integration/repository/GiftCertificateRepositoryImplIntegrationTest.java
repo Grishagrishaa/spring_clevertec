@@ -2,12 +2,13 @@ package ru.clevertec.ecl.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import ru.clevertec.ecl.integration.BaseIntegrationTest;
 import ru.clevertec.ecl.repository.GiftCertificateRepository;
 import ru.clevertec.ecl.repository.entity.GiftCertificate;
+import ru.clevertec.ecl.integration.BaseIntegrationTest;
 import ru.clevertec.ecl.testUtils.builder.impl.GiftCertificateTestBuilder;
 
 import java.util.Optional;
@@ -19,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GiftCertificateRepositoryImplIntegrationTest extends BaseIntegrationTest {
 
     private final GiftCertificateRepository repository;
-
-    private static final Long LAST_ENTITY_ID = 9L;
 
     @Test
     void createShouldReturnCreatedEntity(){

@@ -22,8 +22,6 @@ class UserRepositoryImplIntegrationTest extends BaseIntegrationTest {
 
     private final UserRepository repository;
 
-    private static final Long LAST_ENTITY_ID = 9L;
-
     @Test
     void createShouldReturnCreatedEntity(){
 

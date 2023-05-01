@@ -19,8 +19,6 @@ class TagRepositoryImplIntegrationTest extends BaseIntegrationTest {
 
     private final TagRepository repository;
 
-    private static final Long LAST_ENTITY_ID = 9L;
-
     @Test
     void createShouldReturnCreatedEntity(){
 

@@ -19,8 +19,6 @@ class OrderRepositoryImplIntegrationTest extends BaseIntegrationTest {
 
     private final OrderRepository repository;
 
-    private static final Long LAST_ENTITY_ID = 9L;
-
     @Test
     void createShouldReturnCreatedEntity(){
 
